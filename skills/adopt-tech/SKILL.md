@@ -1,98 +1,92 @@
 ---
 name: adopt-tech
-description: Adopt a technology from fresh facts instead of memory. Use before adding or upgrading a dependency, scaffolding a project, or writing a config file, project layout or import path for a tool that is new to you, new to this repo, or on a new major version.
+description: Adopt a technology from fresh facts, not memory. Use before adding or upgrading a dependency, scaffolding a project, or writing config, layout or import paths for a tool that is new to this repo or on a new major version.
 ---
 
 # Adopt a technology from fresh facts
 
-Memory is stale in the places a new major changes: versions, config shape, file layout,
-import paths. It feels exactly as certain as a fresh fact, so every step here replaces a
-recollection with a **receipt**: what was checked, how, and when, written inline
-(`@sveltejs/kit` 3.0.1 latest, published 2026-10-06 (`npm view`, 2026-10-09)).
+Every version, config key, file path and import this skill produces carries a **receipt**:
+what was checked, how, and when, inline. Example: `@sveltejs/kit` 3.0.1 is `latest`,
+published 2026-10-06 (`npm view`, 2026-10-09). A fact without a receipt is memory; replace it.
 
-Work through the steps in order. Each ends on its completion criterion.
+The **target major** is the newest stable major the repo's version authority allows: the
+registry's `latest`, unless the repo names an authority that sets versions (an SDK such as
+Expo, a catalog, a written policy). Every doc and tool below is read for the target major.
+
+**Stack references.** When the stack matches one, read it before step 1. It names the
+traps; the steps still put a receipt on every fact in it.
+
+- Expo / React Native: [`references/expo.md`](references/expo.md)
 
 ## 1. Version matrix
 
-For every package in the set, including peers the set pulls in, look up the registry
-(`npm view <pkg> dist-tags version peerDependencies engines time --json`, or the
-ecosystem's equivalent). Build one table:
+Look up every package in the set, peers included
+(`npm view <pkg> dist-tags peerDependencies engines time --json`, or the ecosystem's
+equivalent):
 
-| Package | Latest stable | Published | Peer ranges | Engines | Compatible? | Deviation + reason |
+| Package | Target | Published | Peer ranges | Engines | Compatible? | Deviation + reason |
 | --- | --- | --- | --- | --- | --- | --- |
 
-- **Target the latest stable version.** When the repo names a version authority (an SDK
-  that dictates versions, a catalog, a documented policy), that authority sets the
-  target instead of the registry's `latest`.
-- Check the set against itself: peer ranges, the runtime engine, and the package
-  manager's minimum release age (a release younger than that cannot install yet).
-- Let the package manager write versions (`pnpm add -E <pkg>`), or paste them from the
-  lookup.
+Check the set against itself: peer ranges, the runtime engine, and the package manager's
+minimum release age.
 
-A deviation (a previous major, an older minor, a release-age hold) is a decision: write
-the reason in its row and **stop for the human's approval** before installing.
+A **deviation** is any version other than the target: an older major or minor, or a hold
+for release age. Write its reason in the row and stop for the human's approval.
 
-**Done when** every package has a row with a receipt and every deviation is approved.
+**Done when** every package has a row with a receipt, and every deviation is approved.
 
-## 2. LLM resources
+## 2. Vendor sources
 
-Look for what the vendor publishes for agents, at the docs root and on an "AI" docs page:
+Search for each of these, for the target major:
 
-- `llms.txt` (usually an index), `llms-small.txt` / `llms-full.txt` (content inline)
+- an official skill or agent plugin
+- `llms-small.txt` / `llms-full.txt` (content) and `llms.txt` (index)
 - an official MCP server
-- official skills or an agent plugin
-- the official scaffolder (`create-*`, `sv create`, …)
+- the official scaffolder
+- a best-practices chapter, official lint presets or an autofixer
+- the getting-started and migration guides
 
-Prefer, in order: an official skill, a content variant, an index plus the specific page.
-If the repo keeps an LLM-resources table, add a row per tool: URL, variant, check date.
+Read in this order of preference: official skill, content file, index plus the specific
+page. When the repo keeps an LLM-resources table, add a row per tool: URL, variant, receipt.
 
-**Done when** each of the four kinds is marked found (with URL) or not found.
+**Done when** every item is marked found (with URL) or not found.
 
-## 3. Best practices
+## 3. Principles
 
-Find the vendor's own best-practices material **for the installed major**: a "Best
-practices" or "Recommendations" chapter, an official best-practices skill, official lint
-presets or an autofixer, the "recommended" notes in the migration guide.
+From the sources, extract concrete principles (best practices, migration notes,
+recommended config), each with its URL. Keep a principle when:
 
-Explore it into concrete principles, each with its source URL. Verify each principle:
+- the vendor, or an authority the vendor names, states it;
+- it applies to the target major;
+- it fits the repo's rules and version authority;
+- a lint rule, autofixer or ten-line proof of concept shows it working, wherever one can.
 
-- it comes from the vendor, or from an authority the vendor names;
-- it applies to the installed major;
-- it fits the repo's own rules and version authority;
-- where a lint rule, autofixer or ten-line proof of concept can show it, run that.
-
-Adopt the principles that pass; enforce them with pinned tooling where it exists. Record
-each rejected principle with its reason.
-
-**Done when** every principle found is adopted or rejected with a reason.
+**Done when** every best-practices and migration source from step 2 is read, and every
+principle in them is kept or rejected with a reason.
 
 ## 4. Reference scaffold
 
-Read the getting-started and migration pages for the exact major. Generate a reference
-project with the official scaffolder in a scratch directory outside the repo, then diff
-its config files, layout and import paths against what you were about to write.
+Generate a project with the official scaffolder in a scratch directory outside the repo.
+Diff its config, layout and import paths against your plan, and its versions against the
+matrix.
 
-**Done when** every config file, directory and import path you write traces to the
-scaffold or to a docs page for this major.
+**Done when** every config file, directory and import path you will write traces to the
+scaffold or to a step 2 page.
 
-## 5. Official tooling
+## 5. Install
 
-Install the vendor's MCP server, autofixer or skills when they exist, pinned as exact dev
-dependencies and run from `node_modules`. A version-less `npx <pkg>` resolves `latest` on
-every run, so it belongs only in a deliberate drift monitor, never on a gate.
+Install the approved matrix, letting the package manager write exact versions
+(`pnpm add -E <pkg>`). Add the vendor's MCP server, autofixer and skills as exact-pinned
+dev dependencies run from the project, and enforce kept principles with them where they
+reach. A version-less `npx <pkg>` resolves `latest` on every run, so it belongs only in a
+scheduled drift monitor.
 
-**Done when** each official tool is pinned or skipped with a reason.
+**Done when** every installed version matches the matrix, and every official tool is
+pinned or skipped with a reason.
 
 ## 6. Report
 
-Give the human one message: the version matrix, the LLM resources found, the best
-practices adopted and rejected, the tooling installed, and every deviation with its
-reason. Each fact carries its receipt.
+One message to the human: the matrix, sources found, principles kept and rejected, tooling
+installed, and deviations with reasons.
 
-## Stack references
-
-Lessons from projects that already went through an adoption. Read the matching file
-before step 1; they say where the traps are, and the steps above still verify every
-version and API in them.
-
-- Expo / React Native: [`references/expo.md`](references/expo.md)
+**Done when** the report is sent and every fact in it carries its receipt.

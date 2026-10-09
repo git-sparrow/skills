@@ -7,8 +7,8 @@ Lessons from [Kavtsya](https://github.com/git-sparrow/kavtsya) (Expo SDK 56–57
 
 - **The Expo SDK is the version authority** for `expo`, `expo-*`, `@expo/*`, `react`,
   `react-native`, `react-native-*` and `@types/react`. Add them with
-  `npx expo install <pkg>`, never `pnpm add`: the SDK picks a known-good set, and a
-  hand-picked newer version breaks the native build. Exclude this surface from
+  `npx expo install <pkg>`, which installs the SDK's known-good version; a hand-picked
+  newer one breaks the native build. Leave this surface to `expo install` alone, outside
   Dependabot-style automation.
 - `npx expo install --check` reports drift; `npx expo install --fix` realigns the set.
   Being a few patches behind inside the SDK is normal; realign on purpose, in its own
@@ -28,11 +28,13 @@ Lessons from [Kavtsya](https://github.com/git-sparrow/kavtsya) (Expo SDK 56–57
 ## Traps
 
 - **Release-age quarantine.** pnpm's minimum release age blocks a release published
-  minutes ago, which is exactly when an Expo realign is tempting. Wait the window out
-  rather than committing a `minimumReleaseAgeExclude` list.
+  minutes ago, which is exactly when an Expo realign is tempting, and pnpm then offers to
+  write a `minimumReleaseAgeExclude` list. Decline it and wait the window out: the cutoff
+  is rolling, so the same lockfile installs once it passes.
 - **Transitive Expo packages fork.** A package pulled in as a peer can drift to another
   version than `expo` wants. Fix it with `npx expo install <pkg>`, which declares it at
-  the SDK's version; pnpm overrides and `--fix-lockfile` did not work.
+  the SDK's version. That is the fix that held; pnpm overrides and `--fix-lockfile` left
+  the fork in place.
 - **`react-dom` must match `react` exactly.** Adding a DOM test library pulls it in and
   forks `expo`'s peer resolution. Test hooks with a DOM-free renderer.
 
