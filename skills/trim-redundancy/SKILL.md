@@ -2,6 +2,12 @@
 name: trim-redundancy
 description: Trim repeated information from comments and documentation while keeping the reasons and contracts readers need.
 disable-model-invocation: true
+metadata:
+  credits-author: Lauren Tan
+  credits-project: pstack
+  credits-relation: Inspired by no-comments and Comment Sicko
+  credits-no-comments: https://github.com/cursor/plugins/blob/e8d856f0273b42ebafe0ec3546bd645709e7c1b0/pstack/skills/no-comments/SKILL.md
+  credits-reviewer: https://github.com/cursor/plugins/blob/99559f2f52047978602ef365589275831e76af07/pstack/agents/comment-sicko.md
 ---
 
 # Trim redundancy
@@ -29,8 +35,7 @@ standards, and [REVIEWER.md](REVIEWER.md), without your own proposed edits. Give
 those review instructions, not this orchestration workflow. If delegation is unavailable,
 apply `REVIEWER.md` yourself and disclose that limitation.
 
-**Done:** every scoped passage is assessed or listed as unreviewed; coverage distinguishes
-files with findings, reviewed files without findings, and unreviewed files or portions.
+**Done:** the reviewer's report meets the completion criteria in `REVIEWER.md`.
 
 ## 3. Check the evidence
 
@@ -52,13 +57,7 @@ then run the repository's required checks.
 
 ## Report
 
-For either mode, report scope and revisions, accepted findings or edits, unresolved cases,
-coverage gaps, follow-ups and check results. Group related findings and keep evidence
-compact; report safety-critical keeps, not an inventory of every retained sentence.
+For either mode, use `REVIEWER.md`'s reporting style. Report scope and revisions, accepted
+findings or edits, unresolved cases, coverage gaps, follow-ups and check results. Carry
+forward the reviewer's safety-critical keeps.
 Deletion counts are not a quality target.
-
-## Attribution
-
-Inspired by Lauren Tan's pstack
-[no-comments](https://github.com/cursor/plugins/blob/e8d856f0273b42ebafe0ec3546bd645709e7c1b0/pstack/skills/no-comments/SKILL.md)
-and [Comment Sicko](https://github.com/cursor/plugins/blob/99559f2f52047978602ef365589275831e76af07/pstack/agents/comment-sicko.md).
