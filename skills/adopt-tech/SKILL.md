@@ -11,7 +11,8 @@ published 2026-10-06 (`npm view`, 2026-10-09). A fact without a receipt is memor
 
 The **target major** is the newest stable major the repo's version authority allows: the
 registry's `latest`, unless the repo names an authority that sets versions (an SDK such as
-Expo, a catalog, a written policy). Every doc and tool below is read for the target major.
+Expo, a catalog, a written policy). From step 2 on, every doc and tool is read for the
+**chosen major**: the target major, or the major of an approved deviation.
 
 **Scratch work** (downloaded docs, the reference scaffold) goes in one fresh `mktemp -d`
 directory, deleted before the report.
@@ -40,7 +41,7 @@ for release age. Write its reason in the row and stop for the human's approval.
 
 ## 2. Vendor sources
 
-Search for each of these, for the target major:
+Search for each of these, for the chosen major:
 
 - an official skill or agent plugin
 - `llms-small.txt` / `llms-full.txt` (content) and `llms.txt` (index)
@@ -51,7 +52,9 @@ Search for each of these, for the target major:
 
 Read in this order of preference: official skill, content file, index plus the specific
 page. Read an official skill's content even when you choose not to install it: it is the
-vendor's own summary of best practices. When the repo keeps an LLM-resources table, add a row per tool: URL, variant, receipt.
+vendor's own summary of best practices. When the repo keeps an LLM-resources table, add a
+row per tool: URL, variant, receipt. Otherwise the step 6 report is the record, and it
+offers to start such a table.
 
 **Done when** every item is marked found (with URL) or not found.
 
@@ -61,7 +64,7 @@ From the sources, extract concrete principles (best practices, migration notes,
 recommended config), each with its URL. Keep a principle when:
 
 - the vendor, or an authority the vendor names, states it;
-- it applies to the target major;
+- it applies to the chosen major;
 - it fits the repo's rules and version authority;
 - a lint rule, autofixer or ten-line proof of concept shows it working, wherever one can.
 
@@ -82,8 +85,9 @@ scaffold or to a step 2 page, and every scaffold file you remove or change has a
 Install the approved matrix, letting the package manager write exact versions
 (`pnpm add -E <pkg>`). Add the vendor's MCP server, autofixer and skills as exact-pinned
 dev dependencies run from the project, and enforce kept principles with them where they
-reach. A version-less `npx <pkg>` resolves `latest` on every run, so it belongs only in a
-scheduled drift monitor.
+reach. Run them from the local install (`pnpm exec <bin>`, or `npx <bin>` inside the
+project). A remote fetch names its exact version (`pnpm dlx <pkg>@<x.y.z>`); a version-less
+`npx <pkg>` with no local install fetches `latest`, which suits only a scheduled drift monitor.
 
 **Done when** every installed version matches the matrix, every official tool is pinned
 or skipped with a reason, and every installed autofixer and lint preset passes on the
