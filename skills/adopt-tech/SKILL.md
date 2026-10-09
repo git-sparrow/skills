@@ -13,6 +13,9 @@ The **target major** is the newest stable major the repo's version authority all
 registry's `latest`, unless the repo names an authority that sets versions (an SDK such as
 Expo, a catalog, a written policy). Every doc and tool below is read for the target major.
 
+**Scratch work** (downloaded docs, the reference scaffold) goes in one fresh `mktemp -d`
+directory, deleted before the report.
+
 **Stack references.** When the stack matches one, read it before step 1. It names the
 traps; the steps still put a receipt on every fact in it.
 
@@ -47,7 +50,8 @@ Search for each of these, for the target major:
 - the getting-started and migration guides
 
 Read in this order of preference: official skill, content file, index plus the specific
-page. When the repo keeps an LLM-resources table, add a row per tool: URL, variant, receipt.
+page. Read an official skill's content even when you choose not to install it: it is the
+vendor's own summary of best practices. When the repo keeps an LLM-resources table, add a row per tool: URL, variant, receipt.
 
 **Done when** every item is marked found (with URL) or not found.
 
@@ -66,12 +70,12 @@ principle in them is kept or rejected with a reason.
 
 ## 4. Reference scaffold
 
-Generate a project with the official scaffolder in a scratch directory outside the repo.
+Generate a project with the official scaffolder in the scratch directory.
 Diff its config, layout and import paths against your plan, and its versions against the
 matrix.
 
 **Done when** every config file, directory and import path you will write traces to the
-scaffold or to a step 2 page.
+scaffold or to a step 2 page, and every scaffold file you remove or change has a reason.
 
 ## 5. Install
 
@@ -81,8 +85,9 @@ dev dependencies run from the project, and enforce kept principles with them whe
 reach. A version-less `npx <pkg>` resolves `latest` on every run, so it belongs only in a
 scheduled drift monitor.
 
-**Done when** every installed version matches the matrix, and every official tool is
-pinned or skipped with a reason.
+**Done when** every installed version matches the matrix, every official tool is pinned
+or skipped with a reason, and every installed autofixer and lint preset passes on the
+files you wrote.
 
 ## 6. Report
 
