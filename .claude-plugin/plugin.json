@@ -1,0 +1,7 @@
+{
+  "name": "skills",
+  "version": "0.0.0",
+  "description": "Personal agent skills: adopting a technology from fresh facts, take-home tasks.",
+  "author": { "name": "git-sparrow", "url": "https://github.com/git-sparrow" },
+  "repository": "https://github.com/git-sparrow/skills"
+}

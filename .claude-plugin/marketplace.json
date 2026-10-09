@@ -1,0 +1,12 @@
+{
+  "name": "git-sparrow",
+  "owner": { "name": "git-sparrow", "url": "https://github.com/git-sparrow" },
+  "description": "Personal agent skills for Claude Code and Codex.",
+  "plugins": [
+    {
+      "name": "skills",
+      "source": "./",
+      "description": "Personal agent skills: adopting a technology from fresh facts, take-home tasks."
+    }
+  ]
+}
