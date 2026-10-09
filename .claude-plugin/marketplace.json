@@ -6,7 +6,7 @@
     {
       "name": "skills",
       "source": "./",
-      "description": "Personal agent skills: adopting a technology from fresh facts, take-home tasks."
+      "description": "Personal agent skills: adopting technology from fresh facts and trimming redundant prose."
     }
   ]
 }

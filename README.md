@@ -27,6 +27,8 @@ marketplace source (Claude Code).
   pair. Codex reads the same files, so there is no second manifest.
 - `skills/<name>/SKILL.md`: one folder per skill, `name` and `description` in the
   frontmatter.
+- `skills/<name>/agents/openai.yaml`: optional Codex invocation policy. Client handling
+  of this policy file is not yet tested.
 
 Verified 2026-10-09 with Claude Code 2.1.295 and codex-cli 0.160.1: both installed a
 probe skill from this layout in isolated config homes (`CLAUDE_CONFIG_DIR`,
