@@ -7,6 +7,7 @@ metadata:
   credits-author: Matt Pocock
   credits-project: mattpocock/skills (MIT)
   credits-relation: The reviewer's two-axis method (Standards and Spec, smell baseline) is adapted from code-review
+  credits-license: MIT, Copyright (c) 2026 Matt Pocock
   credits-code-review: https://github.com/mattpocock/skills/blob/24fe0ef7737efae15c87225755e9f6f5965e4888/skills/engineering/code-review/SKILL.md
 ---
 
@@ -31,10 +32,10 @@ For each PR, read its head (`gh pr view <n> --json headRefOid`) and create a tas
 
 Run these from the repository checkout, writing into the task folder:
 
-1. `gh pr view <n> --json baseRefName,baseRefOid,headRefOid,isDraft,body,closingIssuesReferences,statusCheckRollup > <task>/inputs/github-pr.json`, then `git fetch origin <baseRefName> pull/<n>/head`, which also brings a fork's head; `git cat-file -e <head>` must succeed.
+1. `gh pr view <n> --json baseRefName,baseRefOid,headRefOid,isDraft,body,closingIssuesReferences,statusCheckRollup > <task>/inputs/github-pr.json`; its `headRefOid` must match the folder's `<head7>`, else start again. Then `git fetch <remote> <baseRefName> pull/<n>/head`, where `<remote>` is the base repository's remote; this also brings a fork's head. `git cat-file -e <head>` must succeed.
 2. `git diff <base>...<head> > <task>/inputs/diff.patch`; it must be non-empty. A stack is pinned PR by PR, each against its own base. Its top PR's head is the **integration candidate**: the stack's contract evidence is established there.
 3. `<task>/inputs/spec.md`: the validation contract (acceptance criteria, in the form the repository's instructions define) of the closing issue, else of the issue the PR body references, else the PR body. `<task>/inputs/pr-body.md`: the PR body with the implementer's handoff and receipts.
-4. Save every page the spec links or the diff cites as a receipt into `inputs/`: reviewers can't fetch. Write `inputs/index.md` listing each input and what it is, including any page that failed to save.
+4. Save every page the spec links or the diff cites as a receipt into `<task>/inputs/`: reviewers can't fetch. Write `<task>/inputs/index.md` listing each input and what it is, including any page that failed to save.
 5. Add a task-owned reviewer worktree at the head: `git worktree add --detach <task>/wt <head>`.
 6. Write `<task>/manifest.md`: PR, base and head SHAs, integration candidate (stacks only), implementer, edit owner, reviewers, owned resources, and `transport_relays: 0`.
 
@@ -47,7 +48,7 @@ The runner is `scripts/run-reviewer.mjs` in this skill's folder (Node 20.11 or l
 ```sh
 node <skill-folder>/scripts/run-reviewer.mjs --engine <claude|codex> --task <task> \
   --round <N> --worktree <task>/wt --base <base> --head <head> \
-  [--previous <task-of-previous-head>/findings-r<N-1>.md]
+  [--previous <findings file of the last adjudicated round>]
 ```
 
 The runner fills the canonical prompt (`reviewer-prompt.md`, plus `reviewer-follow-up.md` with `--previous`) with the pins and paths, so both engines get byte-identical prompts; to change what reviewers are asked, edit those templates. It launches the engine read-only, enforces a 20-minute deadline, stops the reviewer's whole process group, rejects a report whose header, axes or worktree state are wrong, and writes `review-r<N>-<engine>.outcome.json`. Run without arguments, it prints its usage.
@@ -74,7 +75,7 @@ Check each finding yourself at the pinned head, whichever engine raised it: agre
 
 Keep **defects** and **gaps** apart. A documented procedure step that cannot succeed as written is a defect, even when the maintainer owns running it. A runtime result nobody has observed yet is a gap, and only the maintainer accepts it.
 
-Write `<task>/findings-r<N>.md`: each finding with engine, axis, reviewer verdict, your adjudication and evidence, and disposition. It is the next round's `--previous`.
+Write `<task>/findings-r<N>.md`, `<N>` being the round label: each finding on its own line with engine, axis, file and line, what it claims, reviewer verdict, your adjudication and evidence, and disposition, so the next reviewer can check each one. It is the next round's `--previous`.
 
 Then give every assertion of the spec's validation contract a disposition: the evidence that establishes it at the pinned head (for a stack, the integration candidate), usually a test that ran, or an explicit gap. A clean review or green **required checks** (the checks the repository's instructions require before merge, else its CI, else the test commands its README documents) don't establish an assertion on their own.
 
