@@ -27,16 +27,16 @@ Arguments:
 
 ## 1. Pin the target and collect inputs
 
-For each PR, make a task folder outside the repo, `${TMPDIR:-/tmp}/<repo>-review/<pr>-<head7>/`, where `<repo>` is the GitHub repository name (`gh repo view --json name -q .name`). Everything a reviewer may read goes in `<task>/inputs/`; everything you write stays outside it, because the Claude reviewer can read only the worktree and `inputs/`.
+For each PR, read its head (`gh pr view <n> --json headRefOid`) and create a task folder outside the repo with an `inputs/` subfolder: `${TMPDIR:-/tmp}/<repo>-review/<pr>-<head7>/inputs/`, where `<repo>` is the GitHub repository name (`gh repo view --json name -q .name`). Everything a reviewer may read goes in `<task>/inputs/`; everything you write stays outside it, because the Claude reviewer can read only the worktree and `inputs/`.
 
 Run these from the repository checkout, writing into the task folder:
 
-1. `gh pr view <n> --json baseRefOid,headRefOid,isDraft,body,closingIssuesReferences,statusCheckRollup > <task>/inputs/github-pr.json`, then `git fetch origin <baseRefName> pull/<n>/head`, which also brings a fork's head; `git cat-file -e <head>` must succeed.
+1. `gh pr view <n> --json baseRefName,baseRefOid,headRefOid,isDraft,body,closingIssuesReferences,statusCheckRollup > <task>/inputs/github-pr.json`, then `git fetch origin <baseRefName> pull/<n>/head`, which also brings a fork's head; `git cat-file -e <head>` must succeed.
 2. `git diff <base>...<head> > <task>/inputs/diff.patch`; it must be non-empty. A stack is pinned PR by PR, each against its own base. Its top PR's head is the **integration candidate**: the stack's contract evidence is established there.
-3. `<task>/inputs/spec.md`: the closing issue's validation contract (its acceptance criteria, in the form the repository's instructions define), else the PR body. `<task>/inputs/pr-body.md`: the PR body with the implementer's handoff and receipts.
+3. `<task>/inputs/spec.md`: the validation contract (acceptance criteria, in the form the repository's instructions define) of the closing issue, else of the issue the PR body references, else the PR body. `<task>/inputs/pr-body.md`: the PR body with the implementer's handoff and receipts.
 4. Save every page the spec links or the diff cites as a receipt into `inputs/`: reviewers can't fetch. Write `inputs/index.md` listing each input and what it is, including any page that failed to save.
 5. Add a task-owned reviewer worktree at the head: `git worktree add --detach <task>/wt <head>`.
-6. Write `manifest.md`: PR, base and head SHAs, integration candidate (stacks only), implementer, edit owner, reviewers, owned resources, and `transport_relays: 0`.
+6. Write `<task>/manifest.md`: PR, base and head SHAs, integration candidate (stacks only), implementer, edit owner, reviewers, owned resources, and `transport_relays: 0`.
 
 **Done when** every PR has a pinned base and head, a non-empty `inputs/diff.patch`, a spec, an `inputs/index.md` covering every cited page, and a clean reviewer worktree at the head.
 

@@ -402,9 +402,9 @@ describe("prompt template", () => {
 
 describe("command line", () => {
   const script = path.join(import.meta.dirname, "run-reviewer.mjs");
-  const cli = (args, cwd) => {
+  const cli = (args, cwd, entry = script) => {
     try {
-      execFileSync(process.execPath, [script, ...args], {
+      execFileSync(process.execPath, [entry, ...args], {
         cwd,
         encoding: "utf8",
         stdio: "pipe",
@@ -425,13 +425,7 @@ describe("command line", () => {
     const links = mkdtempSync(path.join(tmpdir(), "cross-review-link-"));
     symlinkSync(path.resolve(import.meta.dirname, ".."), path.join(links, "skill"));
     const linked = path.join(links, "skill", "scripts", "run-reviewer.mjs");
-    let code = 0;
-    let stderr = "";
-    try {
-      execFileSync(process.execPath, [linked], { encoding: "utf8", stdio: "pipe" });
-    } catch (error) {
-      ({ status: code, stderr } = error);
-    }
+    const { code, stderr } = cli([], tmpdir(), linked);
     assert.equal(code, 2);
     assert.match(stderr, /--engine is required/);
   });
