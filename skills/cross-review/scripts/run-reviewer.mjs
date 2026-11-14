@@ -10,6 +10,7 @@ import {
   existsSync,
   openSync,
   readFileSync,
+  realpathSync,
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
@@ -347,7 +348,11 @@ async function main() {
 
 class UsageError extends Error {}
 
-if (process.argv[1] && import.meta.filename === path.resolve(process.argv[1])) {
+// Compare real paths: the skill folder is often reached through a symlink.
+if (
+  process.argv[1] &&
+  realpathSync(import.meta.filename) === realpathSync(process.argv[1])
+) {
   main().then(
     (code) => process.exit(code),
     (error) => {

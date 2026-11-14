@@ -5,7 +5,7 @@ Inputs, all local files:
 - The diff: `{{INPUTS}}/diff.patch`. Read it from this file.
 - The spec and its validation contract: `{{INPUTS}}/spec.md`.
 - Everything else in `{{INPUTS}}/`, listed in `{{INPUTS}}/index.md` when present: the PR body and the implementer's handoff, the PR's GitHub state (draft, closing issues, checks), and saved copies of external pages the change cites.
-- Standards: the repository's documented rules for code, in the worktree: whichever of `AGENTS.md`, `CLAUDE.md`, `CODING_STANDARDS.md` and `CONTRIBUTING.md` exist, and the files they point to.
+- Standards: the repository's documented rules for code, in the worktree: whichever of `AGENTS.md`, `CLAUDE.md`, `CODING_STANDARDS.md`, `CONTRIBUTING.md` and the README's rules exist, and the files they point to; then the conventions the repository's existing files share.
 
 Method: review along two axes, each in its own sub-agent run in parallel, so neither axis colours the other; without sub-agents, review one axis at a time. Give each sub-agent the input paths, its brief and the requirements below in full. Report every finding: completeness outranks brevity.
 

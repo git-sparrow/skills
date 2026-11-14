@@ -4,6 +4,7 @@ import {
   mkdirSync,
   mkdtempSync,
   readFileSync,
+  symlinkSync,
   writeFileSync,
 } from "node:fs";
 import { tmpdir } from "node:os";
@@ -418,6 +419,21 @@ describe("command line", () => {
     const { code, stderr } = cli([], tmpdir());
     assert.equal(code, 2);
     assert.ok(stderr.includes(`node ${script} --engine`), stderr);
+  });
+
+  it("runs when reached through a symlinked skill folder", () => {
+    const links = mkdtempSync(path.join(tmpdir(), "cross-review-link-"));
+    symlinkSync(path.resolve(import.meta.dirname, ".."), path.join(links, "skill"));
+    const linked = path.join(links, "skill", "scripts", "run-reviewer.mjs");
+    let code = 0;
+    let stderr = "";
+    try {
+      execFileSync(process.execPath, [linked], { encoding: "utf8", stdio: "pipe" });
+    } catch (error) {
+      ({ status: code, stderr } = error);
+    }
+    assert.equal(code, 2);
+    assert.match(stderr, /--engine is required/);
   });
 
   it("finds the prompt templates beside it when run from another directory", () => {

@@ -12,7 +12,7 @@ metadata:
 
 # Cross-review
 
-You are the **coordinator** and the PR's **edit owner**: you launch the reviewers, adjudicate their reports, fix, verify, push and re-pin. Reports and handoffs travel as files in the task folder, so the maintainer relays nothing. Reviewers start fresh and only read. When another session owns edits, write it a handoff and let that owner run this skill; one editor at a time. The handoff follows the repository's instructions (`AGENTS.md`, `CLAUDE.md` and the docs they point to); without a template there, it names the PR, the pinned head and the task folder holding the findings.
+You are the **coordinator** and the PR's **edit owner**: you launch the reviewers, adjudicate their reports, fix, verify, push and re-pin. Reports and handoffs travel as files in the task folder, so the maintainer relays nothing. Reviewers start fresh and only read. When another session owns edits, write it a handoff and let that owner run this skill; one editor at a time. The handoff follows the **repository's instructions** (whichever of `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md` and the README's rules exist, and the docs they point to); without a template there, it names the PR, the pinned head and the task folder holding the findings.
 
 The maintainer decides policy, accepts gaps and risks, and authorizes merges and production access. Ask in **batches**: collect pending decisions, ask once, and keep working on everything that does not depend on the answer. A pending decision is asked once, not again each round.
 
@@ -27,11 +27,13 @@ Arguments:
 
 ## 1. Pin the target and collect inputs
 
-For each PR, make a task folder outside the repo, `${TMPDIR:-/tmp}/<repo>-review/<pr>-<head7>/`, where `<repo>` is the GitHub repository name (`gh repo view --json name -q .name`). Everything a reviewer may read goes in its `inputs/` subfolder; everything you write stays outside it, because the Claude reviewer can read only the worktree and `inputs/`.
+For each PR, make a task folder outside the repo, `${TMPDIR:-/tmp}/<repo>-review/<pr>-<head7>/`, where `<repo>` is the GitHub repository name (`gh repo view --json name -q .name`). Everything a reviewer may read goes in `<task>/inputs/`; everything you write stays outside it, because the Claude reviewer can read only the worktree and `inputs/`.
 
-1. `gh pr view <n> --json baseRefOid,headRefOid,isDraft,body,closingIssuesReferences,statusCheckRollup > inputs/github-pr.json`, then `git fetch`.
-2. `git diff <base>...<head> > inputs/diff.patch`; it must be non-empty. A stack is pinned PR by PR, each against its own base. Its top PR's head is the **integration candidate**: the stack's contract evidence is established there.
-3. `inputs/spec.md`: the closing issue's validation contract (its acceptance criteria, in the form the repository's instructions define), else the PR body. `inputs/pr-body.md`: the PR body with the implementer's handoff and receipts.
+Run these from the repository checkout, writing into the task folder:
+
+1. `gh pr view <n> --json baseRefOid,headRefOid,isDraft,body,closingIssuesReferences,statusCheckRollup > <task>/inputs/github-pr.json`, then `git fetch origin <baseRefName> pull/<n>/head`, which also brings a fork's head; `git cat-file -e <head>` must succeed.
+2. `git diff <base>...<head> > <task>/inputs/diff.patch`; it must be non-empty. A stack is pinned PR by PR, each against its own base. Its top PR's head is the **integration candidate**: the stack's contract evidence is established there.
+3. `<task>/inputs/spec.md`: the closing issue's validation contract (its acceptance criteria, in the form the repository's instructions define), else the PR body. `<task>/inputs/pr-body.md`: the PR body with the implementer's handoff and receipts.
 4. Save every page the spec links or the diff cites as a receipt into `inputs/`: reviewers can't fetch. Write `inputs/index.md` listing each input and what it is, including any page that failed to save.
 5. Add a task-owned reviewer worktree at the head: `git worktree add --detach <task>/wt <head>`.
 6. Write `manifest.md`: PR, base and head SHAs, integration candidate (stacks only), implementer, edit owner, reviewers, owned resources, and `transport_relays: 0`.
@@ -40,7 +42,7 @@ For each PR, make a task folder outside the repo, `${TMPDIR:-/tmp}/<repo>-review
 
 ## 2. Run the reviewers
 
-The runner is `scripts/run-reviewer.mjs` in this skill's folder (Node 20.11 or later). Run one reviewer per engine with `run_in_background`:
+The runner is `scripts/run-reviewer.mjs` in this skill's folder (Node 20.11 or later). Run one reviewer per engine, each in the background (a review takes minutes):
 
 ```sh
 node <skill-folder>/scripts/run-reviewer.mjs --engine <claude|codex> --task <task> \
@@ -74,7 +76,7 @@ Keep **defects** and **gaps** apart. A documented procedure step that cannot suc
 
 Write `<task>/findings-r<N>.md`: each finding with engine, axis, reviewer verdict, your adjudication and evidence, and disposition. It is the next round's `--previous`.
 
-Then give every assertion of the spec's validation contract a disposition: the evidence that establishes it at the pinned head (for a stack, the integration candidate), usually a test that ran, or an explicit gap. A clean review or green **required checks** (the checks the repository's instructions require before merge, else its CI) don't establish an assertion on their own.
+Then give every assertion of the spec's validation contract a disposition: the evidence that establishes it at the pinned head (for a stack, the integration candidate), usually a test that ran, or an explicit gap. A clean review or green **required checks** (the checks the repository's instructions require before merge, else its CI, else the test commands its README documents) don't establish an assertion on their own.
 
 **Done when** every finding has a verdict with evidence, and every contract assertion has evidence or a recorded gap.
 
@@ -104,7 +106,7 @@ State three results separately:
 - **Converged**: no open CONFIRMED finding at the final head.
 - **Contract ready**: every assertion has evidence at the final head or a gap the maintainer accepted, and no authorization or data-integrity finding is left PLAUSIBLE.
 
-A clean review is not runtime evidence; an unaccepted gap stays in the report as a gap. Remove the task-owned reviewer worktrees with `git worktree remove`, keeping the task folders. With `--publish`, post the report with `gh pr comment <n> --body-file`. Merging and risk acceptance stay with the maintainer.
+A clean review is not runtime evidence; an unaccepted gap stays in the report as a gap. Remove the task-owned reviewer worktrees with `git worktree remove`, keeping the task folders. With `--publish`, post the report with `gh pr comment <n> --body-file <task>/report.md`. Merging and risk acceptance stay with the maintainer.
 
 **Done when** the report exists with all three results, the reviewer worktrees are removed, and, with `--publish`, the report is posted.
 
