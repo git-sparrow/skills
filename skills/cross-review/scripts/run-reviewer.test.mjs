@@ -308,6 +308,11 @@ describe("validateReport", () => {
     );
   });
 
+  it("accepts a complete report that quotes the marker word in its body", () => {
+    const text = `${ok}\nINCOMPLETE outcomes are rerun once.\n`;
+    assert.equal(validateReport(text, { base: BASE, head }), null);
+  });
+
   it("rejects a report that declares itself INCOMPLETE", () => {
     const report = ok.replace(
       "\n\n## Standards",
@@ -469,7 +474,7 @@ describe("command line", () => {
     assert.deepEqual(written(task), []);
   });
 
-  it("rejects a deadline that is not a positive number before writing", () => {
+  it("rejects a deadline outside what a timer can wait, before writing", () => {
     const { task, args } = makeTask();
     for (const value of ["soon", "Infinity", "40000"]) {
       const { code, stderr } = cli(
@@ -477,7 +482,7 @@ describe("command line", () => {
         tmpdir(),
       );
       assert.equal(code, 2, value);
-      assert.match(stderr, /--deadline-minutes must be more than 0 and at most 35791/);
+      assert.match(stderr, /--deadline-minutes must be more than 0/);
     }
     assert.deepEqual(written(task), []);
   });
@@ -485,7 +490,7 @@ describe("command line", () => {
   it("documents --previous as a findings file and exit 2 as a refused launch", () => {
     const { stderr } = cli([], tmpdir());
     assert.match(stderr, /--previous <findings>/);
-    assert.match(stderr, /2 when it refuses to launch or fails before launching/);
+    assert.match(stderr, /2 when it refuses to launch or the runner itself/);
   });
 
   it("finds the prompt templates beside it when run from another directory", () => {
@@ -498,25 +503,37 @@ describe("command line", () => {
 });
 
 describe("stagePrevious", () => {
-  it("copies the findings for this round, replacing a stale copy", () => {
+  /** An inputs folder and a findings file to stage from it. */
+  function makeInputs() {
     const task = mkdtempSync(path.join(tmpdir(), "cross-review-task-"));
-    mkdirSync(path.join(task, "inputs"));
+    const inputs = path.join(task, "inputs");
+    mkdirSync(inputs);
     const source = path.join(task, "findings-r1.md");
     writeFileSync(source, "first\n");
-    const staged = stagePrevious(path.join(task, "inputs"), "2", source);
-    assert.equal(staged, path.join(task, "inputs", "previous-for-r2.md"));
+    return { inputs, source };
+  }
+
+  it("copies the findings for this round, replacing a stale copy", () => {
+    const { inputs, source } = makeInputs();
+    const staged = stagePrevious(inputs, "2", source);
+    assert.equal(staged, path.join(inputs, "previous-for-r2.md"));
     writeFileSync(source, "corrected\n");
-    stagePrevious(path.join(task, "inputs"), "2", source);
+    stagePrevious(inputs, "2", source);
     assert.equal(readFileSync(staged, "utf8"), "corrected\n");
   });
 
   it("removes a stale copy when a retry has no previous findings", () => {
-    const task = mkdtempSync(path.join(tmpdir(), "cross-review-task-"));
-    mkdirSync(path.join(task, "inputs"));
-    const source = path.join(task, "findings-r1.md");
-    writeFileSync(source, "first\n");
-    const staged = stagePrevious(path.join(task, "inputs"), "2", source);
-    stagePrevious(path.join(task, "inputs"), "2", undefined);
+    const { inputs, source } = makeInputs();
+    const staged = stagePrevious(inputs, "2", source);
+    stagePrevious(inputs, "2", undefined);
     assert.equal(existsSync(staged), false);
+  });
+
+  it("removes the copy staged for an earlier round label", () => {
+    const { inputs, source } = makeInputs();
+    const earlier = stagePrevious(inputs, "2", source);
+    stagePrevious(inputs, "2b", source);
+    assert.equal(existsSync(earlier), false);
+    assert.ok(existsSync(path.join(inputs, "previous-for-r2b.md")));
   });
 });

@@ -114,6 +114,10 @@ Engine launch evidence, both read-only:
   worktree and `inputs/`, and an adversarial write probe left the disk unchanged.
   `--restricted` skips user and project settings, so plugins and hooks don't load; the
   subscription login still works.
+- **Both, current versions**: Claude Code 2.1.325 and codex-cli 0.167.2 with the runner's
+  full command lines, in the dogfood review of git-sparrow/skills#9 (2026-11-14): every
+  run left the reviewer worktree clean, and both engines read `inputs/` from a task folder
+  under macOS `/var`.
 
 **Done when** every required reviewer has a COMPLETE outcome at the pinned head, or an
 INCOMPLETE one you have rerun once and escalated.

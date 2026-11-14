@@ -9,6 +9,7 @@ import {
   copyFileSync,
   existsSync,
   openSync,
+  readdirSync,
   readFileSync,
   realpathSync,
   rmSync,
@@ -94,8 +95,9 @@ export function validateReport(text, { base, head }) {
   if (header !== expected) {
     return `report header "${header}" does not match "${expected}"`;
   }
-  const declared = text.match(/^INCOMPLETE\b.*$/m);
-  if (declared) return `reviewer reported ${declared[0].trim()}`;
+  // The prompt reserves line 2 for the marker; a body may quote the word.
+  const second = (text.trim().split("\n")[1] ?? "").trim();
+  if (/^INCOMPLETE\b/.test(second)) return `reviewer reported ${second}`;
   for (const axis of ["## Standards", "## Spec"]) {
     if (!new RegExp(`^${axis}\\b`, "m").test(text)) {
       return `report has no ${axis} section`;
@@ -208,10 +210,15 @@ const previousPath = (inputs, round) =>
 /**
  * Copies the previous round's findings into `inputs`, the only task folder a
  * restricted reviewer can read, replacing any earlier copy for this round.
- * Without `source`, removes such a copy, so a fresh review sees no old findings.
+ * Without `source`, removes such a copy: a fresh review sees no old findings.
  */
 export function stagePrevious(inputs, round, source) {
   const staged = previousPath(inputs, round);
+  // A rerun takes a new label; findings staged for an earlier one must go.
+  for (const file of readdirSync(inputs)) {
+    const other = path.join(inputs, file);
+    if (/^previous-for-r.+\.md$/.test(file) && other !== staged) rmSync(other);
+  }
   if (source) copyFileSync(path.resolve(source), staged);
   else rmSync(staged, { force: true });
   return staged;
@@ -306,7 +313,7 @@ Reviewer inputs live in <task>/inputs/ (at least spec.md and diff.patch);
 previous-for-r<N>.md.
 Writes <task>/review-r<N>-<engine>.{prompt.txt,md,stdout,stderr,outcome.json}.
 Exits 0 when the review is COMPLETE, 1 when INCOMPLETE,
-and 2 when it refuses to launch or fails before launching. The launch checks
+and 2 when it refuses to launch or the runner itself fails. The launch checks
 (arguments, an unused round label, a worktree cleanly at --head) run before
 any file is written.`;
 
