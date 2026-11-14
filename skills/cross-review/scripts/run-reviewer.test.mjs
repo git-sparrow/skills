@@ -15,6 +15,7 @@ import {
   engineCommand,
   renderPrompt,
   runReviewer,
+  stagePrevious,
   validateReport,
 } from "./run-reviewer.mjs";
 
@@ -430,6 +431,57 @@ describe("command line", () => {
     assert.match(stderr, /--engine is required/);
   });
 
+  /** A task folder with the required inputs, and a worktree at its head. */
+  function makeTask() {
+    const { dir, head } = makeWorktree();
+    const task = mkdtempSync(path.join(tmpdir(), "cross-review-task-"));
+    mkdirSync(path.join(task, "inputs"));
+    writeFileSync(path.join(task, "inputs", "spec.md"), "spec\n");
+    writeFileSync(path.join(task, "inputs", "diff.patch"), "diff\n");
+    const previous = path.join(task, "findings-r1.md");
+    writeFileSync(previous, "findings\n");
+    const args = ["--engine", "codex", "--task", task, "--round", "2"];
+    args.push("--worktree", dir, "--base", BASE, "--head", head);
+    args.push("--previous", previous);
+    return { dir, task, args };
+  }
+  const written = (task) =>
+    ["review-r2-codex.prompt.txt", "inputs/previous-for-r2.md"].filter(
+      (file) => existsSync(path.join(task, file)),
+    );
+
+  it("refuses a dirty worktree before writing any file", () => {
+    const { dir, task, args } = makeTask();
+    writeFileSync(path.join(dir, "file.txt"), "changed\n");
+    const { code, stderr } = cli(args, tmpdir());
+    assert.equal(code, 2);
+    assert.match(stderr, /is not clean/);
+    assert.deepEqual(written(task), []);
+  });
+
+  it("refuses a used round label with the start-a-new-round message", () => {
+    const { task, args } = makeTask();
+    writeFileSync(path.join(task, "review-r2-codex.outcome.json"), "{}\n");
+    const { code, stderr } = cli(args, tmpdir());
+    assert.equal(code, 2);
+    assert.match(stderr, /already exists; start a new round/);
+    assert.deepEqual(written(task), []);
+  });
+
+  it("rejects a deadline that is not a positive number before writing", () => {
+    const { task, args } = makeTask();
+    const { code, stderr } = cli([...args, "--deadline-minutes", "soon"], tmpdir());
+    assert.equal(code, 2);
+    assert.match(stderr, /--deadline-minutes must be a positive number/);
+    assert.deepEqual(written(task), []);
+  });
+
+  it("documents --previous as a findings file and exit 2 as a refused launch", () => {
+    const { stderr } = cli([], tmpdir());
+    assert.match(stderr, /--previous <findings>/);
+    assert.match(stderr, /2 when it refuses to launch/);
+  });
+
   it("finds the prompt templates beside it when run from another directory", () => {
     const { dir, head } = makeWorktree();
     const task = mkdtempSync(path.join(tmpdir(), "cross-review-task-"));
@@ -441,5 +493,19 @@ describe("command line", () => {
     const { code, stderr } = cli(args, tmpdir());
     assert.equal(code, 2);
     assert.match(stderr, /Unknown engine "none"/);
+  });
+});
+
+describe("stagePrevious", () => {
+  it("copies the findings for this round, replacing a stale copy", () => {
+    const task = mkdtempSync(path.join(tmpdir(), "cross-review-task-"));
+    mkdirSync(path.join(task, "inputs"));
+    const source = path.join(task, "findings-r1.md");
+    writeFileSync(source, "first\n");
+    const staged = stagePrevious(path.join(task, "inputs"), "2", source);
+    assert.equal(staged, path.join(task, "inputs", "previous-for-r2.md"));
+    writeFileSync(source, "corrected\n");
+    stagePrevious(path.join(task, "inputs"), "2", source);
+    assert.equal(readFileSync(staged, "utf8"), "corrected\n");
   });
 });

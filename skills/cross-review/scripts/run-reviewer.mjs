@@ -183,6 +183,35 @@ function judgeRun({ worktree, base, head, prefix, reportSource }) {
 }
 
 /**
+ * Throws unless this prefix has no outcome yet and the worktree is cleanly at
+ * `head`; returns the outcome path.
+ */
+function assertLaunchable({ worktree, head, prefix }) {
+  const outcomePath = `${prefix}.outcome.json`;
+  if (existsSync(outcomePath)) {
+    throw new Error(`${outcomePath} already exists; start a new round`);
+  }
+  const state = worktreeState(worktree);
+  if (state.head !== head) {
+    throw new Error(
+      `Worktree ${worktree} is at ${state.head}, not at the pinned head ${head}`,
+    );
+  }
+  if (state.status) throw new Error(`Worktree ${worktree} is not clean`);
+  return outcomePath;
+}
+
+/**
+ * Copies the previous round's findings into `inputs`, the only task folder a
+ * restricted reviewer can read, replacing any earlier copy for this round.
+ */
+export function stagePrevious(inputs, round, source) {
+  const staged = path.join(inputs, `previous-for-r${round}.md`);
+  copyFileSync(path.resolve(source), staged);
+  return staged;
+}
+
+/**
  * Runs `argv` in `worktree` and returns the outcome it also writes to
  * `<prefix>.outcome.json`. Throws, without launching, when the worktree is
  * not cleanly at `head` or this prefix already has an outcome; once launched,
@@ -201,17 +230,7 @@ export async function runReviewer({
   deadlineMs,
   graceMs = 5000,
 }) {
-  const outcomePath = `${prefix}.outcome.json`;
-  if (existsSync(outcomePath)) {
-    throw new Error(`${outcomePath} already exists; start a new round`);
-  }
-  const before = worktreeState(worktree);
-  if (before.head !== head) {
-    throw new Error(
-      `Worktree ${worktree} is at ${before.head}, not at the pinned head ${head}`,
-    );
-  }
-  if (before.status) throw new Error(`Worktree ${worktree} is not clean`);
+  const outcomePath = assertLaunchable({ worktree, head, prefix });
 
   const stdoutFd = openSync(`${prefix}.stdout`, "w");
   const stderrFd = openSync(`${prefix}.stderr`, "w");
@@ -274,12 +293,15 @@ export async function runReviewer({
 
 const USAGE = `Usage: node ${import.meta.filename} --engine claude|codex
   --task <dir> --round <N> --worktree <path> --base <sha> --head <sha>
-  [--previous <report>] [--deadline-minutes 20]
+  [--previous <findings>] [--deadline-minutes 20]
 
 Reviewer inputs live in <task>/inputs/ (at least spec.md and diff.patch);
---previous is copied there as previous-r<N>.md.
+--previous, the last adjudicated round's findings, is copied there as
+previous-for-r<N>.md.
 Writes <task>/review-r<N>-<engine>.{prompt.txt,md,stdout,stderr,outcome.json}.
-Exits 0 when the review is COMPLETE, 1 when INCOMPLETE, 2 on a usage error.`;
+Exits 0 when the review is COMPLETE, 1 when INCOMPLETE,
+and 2 when it refuses to launch (bad arguments, a used round label,
+or a worktree not cleanly at --head), before writing any file.`;
 
 async function main() {
   const { values } = parseArgs({
@@ -305,16 +327,19 @@ async function main() {
       throw new UsageError(`${path.join(inputs, input)} is missing`);
     }
   }
+  const deadlineMinutes = Number(values["deadline-minutes"]);
+  if (!(deadlineMinutes > 0)) {
+    throw new UsageError("--deadline-minutes must be a positive number");
+  }
   const vars = { BASE: values.base, HEAD: values.head, INPUTS: inputs };
   let prompt = renderPrompt(
     readFileSync(path.join(SKILL_DIR, "reviewer-prompt.md"), "utf8"),
     vars,
   );
+  const previous = path.join(inputs, `previous-for-r${values.round}.md`);
   if (values.previous) {
-    // Copied into inputs: a restricted reviewer reads nothing else there.
-    const previous = path.join(inputs, `previous-r${values.round}.md`);
-    if (!existsSync(previous)) {
-      copyFileSync(path.resolve(values.previous), previous);
+    if (!existsSync(values.previous)) {
+      throw new UsageError(`${values.previous} is missing`);
     }
     prompt += `\n${renderPrompt(
       readFileSync(path.join(SKILL_DIR, "reviewer-follow-up.md"), "utf8"),
@@ -328,7 +353,11 @@ async function main() {
     prompt,
     reportPath: `${prefix}.md`,
   });
-  writeFileSync(`${prefix}.prompt.txt`, prompt, { flag: "wx" });
+  // Every refusal happens before the first write, so a fixed retry can reuse
+  // the round label.
+  assertLaunchable({ worktree, head: values.head, prefix });
+  if (values.previous) stagePrevious(inputs, values.round, values.previous);
+  writeFileSync(`${prefix}.prompt.txt`, prompt);
   const outcome = await runReviewer({
     engine: values.engine,
     round: values.round,
@@ -338,7 +367,7 @@ async function main() {
     head: values.head,
     prefix,
     reportSource,
-    deadlineMs: Number(values["deadline-minutes"]) * 60_000,
+    deadlineMs: deadlineMinutes * 60_000,
   });
   console.log(
     `${values.engine} r${values.round}: ${outcome.outcome}${outcome.reason ? ` (${outcome.reason})` : ""}\n${prefix}.outcome.json`,
