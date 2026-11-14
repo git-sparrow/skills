@@ -11,6 +11,7 @@ import {
   openSync,
   readFileSync,
   realpathSync,
+  rmSync,
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
@@ -201,13 +202,18 @@ function assertLaunchable({ worktree, head, prefix }) {
   return outcomePath;
 }
 
+const previousPath = (inputs, round) =>
+  path.join(inputs, `previous-for-r${round}.md`);
+
 /**
  * Copies the previous round's findings into `inputs`, the only task folder a
  * restricted reviewer can read, replacing any earlier copy for this round.
+ * Without `source`, removes such a copy, so a fresh review sees no old findings.
  */
 export function stagePrevious(inputs, round, source) {
-  const staged = path.join(inputs, `previous-for-r${round}.md`);
-  copyFileSync(path.resolve(source), staged);
+  const staged = previousPath(inputs, round);
+  if (source) copyFileSync(path.resolve(source), staged);
+  else rmSync(staged, { force: true });
   return staged;
 }
 
@@ -300,8 +306,9 @@ Reviewer inputs live in <task>/inputs/ (at least spec.md and diff.patch);
 previous-for-r<N>.md.
 Writes <task>/review-r<N>-<engine>.{prompt.txt,md,stdout,stderr,outcome.json}.
 Exits 0 when the review is COMPLETE, 1 when INCOMPLETE,
-and 2 when it refuses to launch (bad arguments, a used round label,
-or a worktree not cleanly at --head), before writing any file.`;
+and 2 when it refuses to launch or fails before launching. The launch checks
+(arguments, an unused round label, a worktree cleanly at --head) run before
+any file is written.`;
 
 async function main() {
   const { values } = parseArgs({
@@ -328,22 +335,23 @@ async function main() {
     }
   }
   const deadlineMinutes = Number(values["deadline-minutes"]);
-  if (!(deadlineMinutes > 0)) {
-    throw new UsageError("--deadline-minutes must be a positive number");
+  if (!(deadlineMinutes > 0 && deadlineMinutes <= MAX_DEADLINE_MINUTES)) {
+    throw new UsageError(
+      `--deadline-minutes must be more than 0 and at most ${MAX_DEADLINE_MINUTES}`,
+    );
   }
   const vars = { BASE: values.base, HEAD: values.head, INPUTS: inputs };
   let prompt = renderPrompt(
     readFileSync(path.join(SKILL_DIR, "reviewer-prompt.md"), "utf8"),
     vars,
   );
-  const previous = path.join(inputs, `previous-for-r${values.round}.md`);
   if (values.previous) {
     if (!existsSync(values.previous)) {
       throw new UsageError(`${values.previous} is missing`);
     }
     prompt += `\n${renderPrompt(
       readFileSync(path.join(SKILL_DIR, "reviewer-follow-up.md"), "utf8"),
-      { ...vars, PREVIOUS: previous },
+      { ...vars, PREVIOUS: previousPath(inputs, values.round) },
     )}`;
   }
   const prefix = path.join(task, `review-r${values.round}-${values.engine}`);
@@ -356,7 +364,7 @@ async function main() {
   // Every refusal happens before the first write, so a fixed retry can reuse
   // the round label.
   assertLaunchable({ worktree, head: values.head, prefix });
-  if (values.previous) stagePrevious(inputs, values.round, values.previous);
+  stagePrevious(inputs, values.round, values.previous);
   writeFileSync(`${prefix}.prompt.txt`, prompt);
   const outcome = await runReviewer({
     engine: values.engine,
@@ -376,6 +384,9 @@ async function main() {
 }
 
 class UsageError extends Error {}
+
+// setTimeout fires at once for any delay above 2^31 - 1 ms (about 24.8 days).
+const MAX_DEADLINE_MINUTES = Math.floor((2 ** 31 - 1) / 60_000);
 
 // Compare real paths: the skill folder is often reached through a symlink.
 if (

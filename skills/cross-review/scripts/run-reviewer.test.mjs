@@ -424,7 +424,8 @@ describe("command line", () => {
 
   it("runs when reached through a symlinked skill folder", () => {
     const links = mkdtempSync(path.join(tmpdir(), "cross-review-link-"));
-    symlinkSync(path.resolve(import.meta.dirname, ".."), path.join(links, "skill"));
+    const skillDir = path.resolve(import.meta.dirname, "..");
+    symlinkSync(skillDir, path.join(links, "skill"));
     const linked = path.join(links, "skill", "scripts", "run-reviewer.mjs");
     const { code, stderr } = cli([], tmpdir(), linked);
     assert.equal(code, 2);
@@ -470,26 +471,26 @@ describe("command line", () => {
 
   it("rejects a deadline that is not a positive number before writing", () => {
     const { task, args } = makeTask();
-    const { code, stderr } = cli([...args, "--deadline-minutes", "soon"], tmpdir());
-    assert.equal(code, 2);
-    assert.match(stderr, /--deadline-minutes must be a positive number/);
+    for (const value of ["soon", "Infinity", "40000"]) {
+      const { code, stderr } = cli(
+        [...args, "--deadline-minutes", value],
+        tmpdir(),
+      );
+      assert.equal(code, 2, value);
+      assert.match(stderr, /--deadline-minutes must be more than 0 and at most 35791/);
+    }
     assert.deepEqual(written(task), []);
   });
 
   it("documents --previous as a findings file and exit 2 as a refused launch", () => {
     const { stderr } = cli([], tmpdir());
     assert.match(stderr, /--previous <findings>/);
-    assert.match(stderr, /2 when it refuses to launch/);
+    assert.match(stderr, /2 when it refuses to launch or fails before launching/);
   });
 
   it("finds the prompt templates beside it when run from another directory", () => {
-    const { dir, head } = makeWorktree();
-    const task = mkdtempSync(path.join(tmpdir(), "cross-review-task-"));
-    mkdirSync(path.join(task, "inputs"));
-    writeFileSync(path.join(task, "inputs", "spec.md"), "spec\n");
-    writeFileSync(path.join(task, "inputs", "diff.patch"), "diff\n");
-    const args = ["--engine", "none", "--task", task, "--round", "1"];
-    args.push("--worktree", dir, "--base", BASE, "--head", head);
+    const { args } = makeTask();
+    args[args.indexOf("codex")] = "none";
     const { code, stderr } = cli(args, tmpdir());
     assert.equal(code, 2);
     assert.match(stderr, /Unknown engine "none"/);
@@ -507,5 +508,15 @@ describe("stagePrevious", () => {
     writeFileSync(source, "corrected\n");
     stagePrevious(path.join(task, "inputs"), "2", source);
     assert.equal(readFileSync(staged, "utf8"), "corrected\n");
+  });
+
+  it("removes a stale copy when a retry has no previous findings", () => {
+    const task = mkdtempSync(path.join(tmpdir(), "cross-review-task-"));
+    mkdirSync(path.join(task, "inputs"));
+    const source = path.join(task, "findings-r1.md");
+    writeFileSync(source, "first\n");
+    const staged = stagePrevious(path.join(task, "inputs"), "2", source);
+    stagePrevious(path.join(task, "inputs"), "2", undefined);
+    assert.equal(existsSync(staged), false);
   });
 });
