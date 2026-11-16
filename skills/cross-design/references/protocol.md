@@ -40,8 +40,10 @@ identity fields and status vocabulary supplied in the request. The `requestSha25
 hashes `context.md` (the substantive request before its response envelope); the full
 request is saved alongside it. A digest establishes identity, not reasoning quality.
 
-Use a supervisor to stop the call at its returned deadline; it is the smaller of the
-per-call allowance and remaining total budget. Save its final response verbatim to
+Before dispatch, the host rechecks the returned absolute deadline; reservation does not
+authorize a late launch or restart the clock. Use supported supervision to cancel work at
+that deadline, the smaller of the per-call allowance and remaining total budget. Leave
+time to collect and record the result before expiry. Save its final response verbatim to
 `<attempt-dir>/raw.txt`, retaining any original provider wrapper and logs separately.
 After a successful transport completion:
 
@@ -91,8 +93,10 @@ overwritten. An interrupted helper may leave a partial directory; preserve it an
 the failed run rather than reusing paths or silently repairing the ledger.
 
 There are at most six substantive calls and two transport retries. The helper rejects
-late launches and late responses. It does not terminate a running call; use the transport
-supervisor. A consultation cannot continue past its deadline by creating another run
+late reservations and late acceptance; it does not observe actual launch or response
+arrival time. The host owns launch checks and cancellation. The coordinator enforces
+caller limits below the helper's ceiling, such as a single challenge cycle. A consultation
+cannot continue past its deadline by creating another run
 unless the caller explicitly grants a new budget. Save `decision.md` and any unreviewed
 candidate after the deadline; budget limits calls, not honest reporting.
 

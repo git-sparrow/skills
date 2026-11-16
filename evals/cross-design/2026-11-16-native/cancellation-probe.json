@@ -1,0 +1,35 @@
+{
+  "configuredModel": "gpt-6.1-sol",
+  "agent": "/root/native_cancel_probe",
+  "task": "Wait for 45 seconds without files, network or child agents; parent interrupts",
+  "observedEvents": [
+    {
+      "tool": "collaboration.spawn_agent",
+      "result": {
+        "task_name": "/root/native_cancel_probe"
+      }
+    },
+    {
+      "agentMessage": "I am about to wait for 45 seconds for the cancellation probe."
+    },
+    {
+      "tool": "collaboration.interrupt_agent",
+      "result": {
+        "previous_status": "running"
+      }
+    },
+    {
+      "tool": "collaboration.list_agents",
+      "result": {
+        "agent_name": "/root/native_cancel_probe",
+        "agent_status": "interrupted"
+      }
+    }
+  ],
+  "observedAt": "2026-11-16T14:57:32.303807+00:00",
+  "limits": [
+    "Coordinator-recorded tool receipts, not provider-side telemetry.",
+    "Confirms an interrupted managed turn, not remote provider computation termination.",
+    "Manual interruption, not a test of an automatic deadline watchdog or external process descendants."
+  ]
+}

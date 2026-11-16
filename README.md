@@ -10,7 +10,7 @@ Each skill comes from a real incident, and the PR that added it shows the skill 
 | --- | --- | --- |
 | `adopt-tech` | [git-sparrow/kavtsya#303](https://github.com/git-sparrow/kavtsya/issues/303): a scaffold written for the previous major after the version check had passed | [#2](https://github.com/git-sparrow/skills/pull/2), and the hand-run eval recorded in [#3](https://github.com/git-sparrow/skills/issues/3) |
 | `trim-redundancy` | [git-sparrow/kavtsya#305](https://github.com/git-sparrow/kavtsya/pull/305): a redundant incident recap in the docs | [#4](https://github.com/git-sparrow/skills/pull/4) |
-| `cross-design` | [#12](https://github.com/git-sparrow/skills/issues/12): separate design consultation from repeated code-review repair rounds | [#13](https://github.com/git-sparrow/skills/pull/13): protocol tests and a simulated workflow evaluation; live two-model consultation not yet verified |
+| `cross-design` | [#12](https://github.com/git-sparrow/skills/issues/12): separate design consultation from repeated code-review repair rounds | [#13](https://github.com/git-sparrow/skills/pull/13): protocol tests, simulation, and a [live native two-model consultation](evals/cross-design/2026-11-16-native/decision.md) |
 
 ## Install
 
