@@ -10,6 +10,7 @@ Each skill comes from a real incident, and the PR that added it shows the skill 
 | --- | --- | --- |
 | `adopt-tech` | [git-sparrow/kavtsya#303](https://github.com/git-sparrow/kavtsya/issues/303): a scaffold written for the previous major after the version check had passed | [#2](https://github.com/git-sparrow/skills/pull/2), and the hand-run eval recorded in [#3](https://github.com/git-sparrow/skills/issues/3) |
 | `trim-redundancy` | [git-sparrow/kavtsya#305](https://github.com/git-sparrow/kavtsya/pull/305): a redundant incident recap in the docs | [#4](https://github.com/git-sparrow/skills/pull/4) |
+| `cross-design` | [#12](https://github.com/git-sparrow/skills/issues/12): separate design consultation from repeated code-review repair rounds | Protocol tests and a simulated workflow evaluation; live two-model consultation not yet verified |
 
 ## Install
 
@@ -36,6 +37,8 @@ marketplace source (Claude Code).
   pair. Codex reads the same files, so there is no second manifest.
 - `skills/<name>/SKILL.md`: one folder per skill, `name` and `description` in the
   frontmatter.
+- `skills/<name>/scripts/`: optional helpers and their tests. Run
+  `node --test skills/*/scripts/*.test.mjs` (Node 20.11 or later).
 - `skills/<name>/agents/openai.yaml`: optional Codex invocation policy.
   `policy.allow_implicit_invocation: false` keeps the skill out of the model's skill list,
   and an explicit `$skill` still runs it. Checked 2026-11-14 with codex-cli 0.167.2, the
