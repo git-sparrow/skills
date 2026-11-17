@@ -1,0 +1,35 @@
+{
+  "repo": "/private/tmp/cr11-live/defect-repo",
+  "base": "61dc3fe10dff0951dfc3aafa775737be3895dd81",
+  "head": "69677e2d16c12f14bac686117481fc3e222398ab",
+  "baseSelector": "base",
+  "headSelector": "review-head",
+  "diffArgs": [
+    "diff",
+    "--no-ext-diff",
+    "--no-textconv",
+    "--binary",
+    "--no-color",
+    "--no-renames"
+  ],
+  "diffSha256": "f423449558e2ab2e754586b2aa6006fc16ed1082137ac49c24d2a0be3e7f6869",
+  "experts": [
+    {
+      "id": "sol",
+      "model": "gpt-6.1-sol",
+      "provider": "OpenAI",
+      "harness": "native collaboration"
+    },
+    {
+      "id": "astra",
+      "model": "gpt-6-astra",
+      "provider": "OpenAI",
+      "harness": "native collaboration"
+    }
+  ],
+  "mode": "repair",
+  "startedAt": 1794902605117,
+  "deadline": 1794904405117,
+  "callMs": 600000,
+  "maxCalls": 8
+}

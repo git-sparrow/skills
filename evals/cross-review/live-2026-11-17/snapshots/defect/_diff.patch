@@ -1,0 +1,7 @@
+diff --git a/change.mjs b/change.mjs
+index 1f6d416..91949e2 100644
+--- a/change.mjs
++++ b/change.mjs
+@@ -1 +1 @@
+-export const allowed = (requested, available) => Math.min(requested, available);
++export const allowed = (requested, available) => Math.max(requested, available);

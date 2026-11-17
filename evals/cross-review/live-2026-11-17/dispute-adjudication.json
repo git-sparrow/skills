@@ -1,0 +1,15 @@
+[
+  {
+    "id": "R2",
+    "sources": [
+      "astra-challenge-d18e9171-dba2-4c1e-a5f2-3f4eee6f1687/sol-1",
+      "sol-challenge-e861effc-a7a4-4bed-bd05-898ea1e3cb67/sol-1",
+      "sol-discovery-24358b8b-5155-4f2d-a58e-435d8e19e222/sol-1"
+    ],
+    "confidence": "medium",
+    "impact": "behavioral",
+    "disposition": "unresolved",
+    "evidence": "Pinned execution confirms an empty/whitespace-only name returns Hello, followed by a separator space; source and contract allow competing whole-greeting versus name-only interpretations.",
+    "reason": "Retain the behavioral observation and both initial interpretations. Challenge narrowed certainty but did not establish authoritative expected output. No further cycle; this fixture needs contract clarification before readiness."
+  }
+]

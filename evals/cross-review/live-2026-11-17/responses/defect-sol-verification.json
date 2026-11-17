@@ -1,0 +1,13 @@
+{
+  "attemptId": "sol-verification-d7697910-324c-4522-9963-330d0d7f1748",
+  "snapshotSha256": "b39a7c1e96f28e3028a43f973c329e9bfea6b457368ff8bd0ba6fb1d6e810c4f",
+  "requestSha256": "16393e192c0cabcc0d133f712c87e4f865341f426b2bcc0bb1fb9a15bd9088d9",
+  "completion": "COMPLETE",
+  "analysis": "R1 is fixed by the captured overlay. Both original finding IDs, sol-discovery-f47d13b1-e471-4e0b-93f6-715c2a9cb5cf/SOL-1 and astra-discovery-c922dd48-9c47-464a-ba90-c725d9b68498/ASTRA-001, concern the same Math.max regression. Restoring Math.min makes the unchanged caller return stock - min(requested, stock). For nonnegative inputs, the subtracted quantity is bounded by stock and requested, so remaining stock cannot be negative and fulfillment equals the available quantity up to the request. This also handles zero and equal quantities. The recorded base/head results substantiate the regression examples; the reported 121 passing repair cases cover both ordering branches, equality and zero across 0 through 10. Those checks establish the sampled behavior, while the direct expression establishes the scoped invariant generally. No remaining claim is supported against this overlay.",
+  "coverage": "Read every snapshot input and the focused verification packet. Inspected change.mjs and caller.mjs at both pinned commits with git show. Verified the exact tracked overlay against the pinned head and traced its effect through the unchanged caller. This was focused verification of R1, not a fresh full review of a committed repair.",
+  "limitations": [
+    "Recorded executable checks were assessed as supplied evidence and were not independently rerun.",
+    "The verified repair is the captured tracked overlay; the original pinned head still contains Math.max."
+  ],
+  "findings": []
+}

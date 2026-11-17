@@ -1,0 +1,46 @@
+{
+  "review": "COMPLETE",
+  "currency": "current",
+  "blocking": [
+    "R1"
+  ],
+  "unresolved": [],
+  "findings": [
+    {
+      "id": "ASTRA-001",
+      "location": "change.mjs:1",
+      "claim": "Using Math.max causes reserve to return negative stock when demand exceeds availability and to consume excess stock when demand is below availability.",
+      "evidence": "At both pins caller.mjs:2 defines reserve(stock, requested) as stock - allowed(requested, stock). At head, reserve(3, 5) therefore returns -2 instead of base's 0, violating the explicit nonnegative-stock invariant. Head reserve(5, 2) returns 0 instead of base's 3, and reserve(5, 0) also returns 0, consuming stock despite no request. These results follow directly from the changed Math.max expression.",
+      "confidence": "high",
+      "impact": "behavioral",
+      "disposition": "proposed",
+      "source": "astra-discovery-c922dd48-9c47-464a-ba90-c725d9b68498/ASTRA-001"
+    },
+    {
+      "id": "SOL-1",
+      "location": "change.mjs:1",
+      "claim": "Math.max causes reserve to overdraw stock when demand exceeds stock and to over-fulfill smaller requests.",
+      "evidence": "At head, allowed(requested, available) returns Math.max(requested, available), and caller.mjs:2 returns stock - allowed(requested, stock). Thus reserve(3, 5) evaluates to -2, violating the nonnegative-stock invariant; reserve(5, 2) evaluates to 0 rather than 3, consuming three extra units. At base, Math.min produces 0 and 3 respectively. Restore the cap so the reserved quantity is min(requested, stock).",
+      "confidence": "high",
+      "impact": "behavioral",
+      "disposition": "proposed",
+      "source": "sol-discovery-f47d13b1-e471-4e0b-93f6-715c2a9cb5cf/SOL-1"
+    }
+  ],
+  "adjudication": [
+    {
+      "id": "R1",
+      "sources": [
+        "sol-discovery-f47d13b1-e471-4e0b-93f6-715c2a9cb5cf/SOL-1",
+        "astra-discovery-c922dd48-9c47-464a-ba90-c725d9b68498/ASTRA-001"
+      ],
+      "confidence": "high",
+      "impact": "behavioral",
+      "disposition": "confirmed",
+      "evidence": "{\"base\":[{\"args\":[3,5],\"result\":0},{\"args\":[5,2],\"result\":3},{\"args\":[5,0],\"result\":5}],\"review-head\":[{\"args\":[3,5],\"result\":-2},{\"args\":[5,2],\"result\":0},{\"args\":[5,0],\"result\":0}]}",
+      "reason": "Changed Math.max causes overdraw/overfulfillment in unchanged caller.mjs:2; base satisfies contract."
+    }
+  ],
+  "calls": 2,
+  "readiness": "Coordinator must report scoped checks and limitations; completion is not merge approval"
+}

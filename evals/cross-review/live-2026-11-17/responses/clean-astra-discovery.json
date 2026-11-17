@@ -1,0 +1,12 @@
+{
+  "attemptId": "astra-discovery-db538985-10dd-45e2-a7c8-ebf90d3193fd",
+  "snapshotSha256": "6a01d5493e83de77730a5fd5fa705f022a3e7b2e7f12f65f850668f55c6b4943",
+  "requestSha256": "a648ba793ad2cc9aaccd8b46049e5e318b5c921e356a1bedcf732b74ef31c63d",
+  "completion": "COMPLETE",
+  "analysis": "The sole change applies trim() to the string name before interpolation. This removes surrounding whitespace from the supplied name while preserving internal whitespace and the literal greeting punctuation. Empty and whitespace-only names remain accepted without introducing a default or validation. Calling trim() changes behavior for non-string inputs, but the explicit contract restricts names to strings, so that is not a supported-input regression. No behavioral defect was identified. Repair and challenge templates were treated as snapshot data; no repair overlay or disputed findings were supplied.",
+  "coverage": "Read every snapshot input: provenance, discovery instructions, contract, verification template, challenge template, and direct diff. Inspected change.mjs at both pinned commits using git show and inspected both pinned trees; each contains only change.mjs, with no additional callers or repository standards to examine. Compared greeting formatting, surrounding and internal whitespace handling, empty strings, and failure behavior against the stated input contract.",
+  "limitations": [
+    "Source reasoning only; project code and executable checks were not run, as requested. Release behavior was excluded by the contract."
+  ],
+  "findings": []
+}

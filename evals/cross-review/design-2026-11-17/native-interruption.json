@@ -1,0 +1,23 @@
+{
+  "observedAt": "2026-11-17T07:56:25.873678+00:00",
+  "handle": "/root/lifecycle_probe",
+  "configuredModel": "gpt-6.1-sol",
+  "resolvedModel": "unknown",
+  "request": "Harmless 60-second wait, no files/network/edits",
+  "interruptResult": {
+    "previous_status": "running"
+  },
+  "subsequentListAgents": {
+    "agent_status": "interrupted"
+  },
+  "demonstrated": "Manual interruption followed by observable terminal managed-turn state; coordinator can reconcile this handle",
+  "notDemonstrated": [
+    "automatic deadline firing",
+    "coordinator-loss cleanup",
+    "external process descendants",
+    "remote provider shutdown",
+    "OS isolation"
+  ],
+  "dispatchTimestamp": "unknown",
+  "terminalTimestamp": "unknown"
+}

@@ -6,7 +6,7 @@
     {
       "name": "skills",
       "source": "./",
-      "description": "Personal agent skills: adopting technology from fresh facts, trimming redundant prose, and consulting independent models on design decisions."
+      "description": "Personal agent skills: adopting technology from fresh facts, trimming redundant prose, consulting independent models on design decisions, and bounded code review."
     }
   ]
 }

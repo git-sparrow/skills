@@ -1,6 +1,8 @@
 # Artifact protocol
 
-Use `scripts/protocol.mjs` from the skill folder. The coordinator alone calls this helper
+Use `scripts/protocol.mjs` from the skill folder in a complete plugin tree. Its shared
+`lib/artifacts.mjs` dependency ships with the plugin. Skill-directory symlinks into that
+tree work; copying only the skill folder does not. The coordinator alone calls this helper
 and writes the durable record. Reserve attempts sequentially, then run their model calls
 concurrently. The helper is not a concurrent job scheduler or a process supervisor.
 

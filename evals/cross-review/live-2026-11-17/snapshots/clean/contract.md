@@ -1,0 +1,1 @@
+Names are strings. Trim leading and trailing whitespace in the greeting; preserve internal whitespace and greeting punctuation. No default value or validation requested. Release is excluded.

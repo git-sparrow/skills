@@ -1,0 +1,22 @@
+{
+  "attemptId": "astra-discovery-c922dd48-9c47-464a-ba90-c725d9b68498",
+  "snapshotSha256": "b39a7c1e96f28e3028a43f973c329e9bfea6b457368ff8bd0ba6fb1d6e810c4f",
+  "requestSha256": "94f00d83bcab4ed88e5036a65a2887f176b8130850bf0cd0dce869ae5a6ee5fc",
+  "completion": "COMPLETE",
+  "analysis": "The unchanged reserve caller subtracts allowed(requested, stock) from stock. At base, Math.min bounds fulfillment by both requested quantity and available stock. Head replaces this with Math.max, reversing both bounds: requests exceeding stock produce negative remaining stock, while requests below stock consume more than requested. Equal quantities still behave correctly. These are consequences of one changed expression and share one repair.",
+  "coverage": "Read every snapshot input, including contract, provenance, diff and supplied review templates. Inspected both pinned repository trees and both files at each pin with git show. Compared the changed helper and its sole caller across base and head. Considered requests below, equal to and above stock, including zero boundaries. Release was excluded as specified.",
+  "limitations": [
+    "Source reasoning only; no project code or executable checks were run."
+  ],
+  "findings": [
+    {
+      "id": "ASTRA-001",
+      "location": "change.mjs:1",
+      "claim": "Using Math.max causes reserve to return negative stock when demand exceeds availability and to consume excess stock when demand is below availability.",
+      "evidence": "At both pins caller.mjs:2 defines reserve(stock, requested) as stock - allowed(requested, stock). At head, reserve(3, 5) therefore returns -2 instead of base's 0, violating the explicit nonnegative-stock invariant. Head reserve(5, 2) returns 0 instead of base's 3, and reserve(5, 0) also returns 0, consuming stock despite no request. These results follow directly from the changed Math.max expression.",
+      "confidence": "high",
+      "impact": "behavioral",
+      "disposition": "proposed"
+    }
+  ]
+}

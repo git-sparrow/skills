@@ -1,0 +1,12 @@
+{
+  "attemptId": "sol-challenge-dd3a0886-374a-43e7-9b1e-576dea6a311f",
+  "expert": "sol",
+  "phase": "challenge",
+  "retry": false,
+  "snapshotSha256": "6a01d5493e83de77730a5fd5fa705f022a3e7b2e7f12f65f850668f55c6b4943",
+  "requestSha256": "8532ef7ef4457804e40ffcfd361da88413fc211aa04f97f04648a68756810339",
+  "overlaySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "startedAt": 1794903367178,
+  "deadline": 1794903967178,
+  "requestFileSha256": "2d4d83acdfdb36014927a413a9408a3b2ddeccd8085050d99f75131ac5637671"
+}

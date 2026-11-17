@@ -1,0 +1,684 @@
+{
+  "cases": {
+    "defect": {
+      "run": {
+        "repo": "/private/tmp/cr11-live/defect-repo",
+        "base": "61dc3fe10dff0951dfc3aafa775737be3895dd81",
+        "head": "69677e2d16c12f14bac686117481fc3e222398ab",
+        "baseSelector": "base",
+        "headSelector": "review-head",
+        "diffArgs": [
+          "diff",
+          "--no-ext-diff",
+          "--no-textconv",
+          "--binary",
+          "--no-color",
+          "--no-renames"
+        ],
+        "diffSha256": "f423449558e2ab2e754586b2aa6006fc16ed1082137ac49c24d2a0be3e7f6869",
+        "experts": [
+          {
+            "id": "sol",
+            "model": "gpt-6.1-sol",
+            "provider": "OpenAI",
+            "harness": "native collaboration"
+          },
+          {
+            "id": "astra",
+            "model": "gpt-6-astra",
+            "provider": "OpenAI",
+            "harness": "native collaboration"
+          }
+        ],
+        "mode": "repair",
+        "startedAt": 1794902605117,
+        "deadline": 1794904405117,
+        "callMs": 600000,
+        "maxCalls": 8,
+        "snapshotSha256": "b39a7c1e96f28e3028a43f973c329e9bfea6b457368ff8bd0ba6fb1d6e810c4f"
+      },
+      "receipts": [
+        {
+          "attempt": {
+            "attemptId": "astra-discovery-c922dd48-9c47-464a-ba90-c725d9b68498",
+            "expert": "astra",
+            "phase": "discovery",
+            "retry": false,
+            "snapshotSha256": "b39a7c1e96f28e3028a43f973c329e9bfea6b457368ff8bd0ba6fb1d6e810c4f",
+            "requestSha256": "94f00d83bcab4ed88e5036a65a2887f176b8130850bf0cd0dce869ae5a6ee5fc",
+            "overlaySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "startedAt": 1794902605150,
+            "deadline": 1794903205150,
+            "requestFileSha256": "a79124d1945e47af97aaf6550db18a29d29f98e127c5b0fe220b594c41d2f788"
+          },
+          "launch": {
+            "attemptId": "astra-discovery-c922dd48-9c47-464a-ba90-c725d9b68498",
+            "handle": "/root/live_defect_astra",
+            "binding": {
+              "id": "astra",
+              "model": "gpt-6-astra",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902636196
+          },
+          "transport": {
+            "attemptId": "astra-discovery-c922dd48-9c47-464a-ba90-c725d9b68498",
+            "handle": "/root/live_defect_astra",
+            "binding": {
+              "id": "astra",
+              "model": "gpt-6-astra",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902755380,
+            "outcome": "succeeded",
+            "evidence": "Native final assistant response from matching handle; final event recorded at 2026-11-17T08:04:29.342Z",
+            "limits": "Configured override only; resolved identity unknown; prompt-only isolation; automatic deadline, descendants and remote shutdown unqualified"
+          },
+          "responseSha256": "b34e77bb50b97bf321a62776e4d248f5e662dbd96701cab8e1ecfd49f7e41b43",
+          "transportSha256": "0f67325cef50fea17ba7e5c0a98577ba98f81059eec5ea2bf64a4c4036c28eb1",
+          "reservationToFinalObservationMs": 150230
+        },
+        {
+          "attempt": {
+            "attemptId": "astra-verification-e51c24c8-26f6-461f-93c2-c9a5cf7a4a4c",
+            "expert": "astra",
+            "phase": "verification",
+            "retry": false,
+            "snapshotSha256": "b39a7c1e96f28e3028a43f973c329e9bfea6b457368ff8bd0ba6fb1d6e810c4f",
+            "requestSha256": "16393e192c0cabcc0d133f712c87e4f865341f426b2bcc0bb1fb9a15bd9088d9",
+            "overlaySha256": "231d2fab3487b86740bdb2fec3f3b11fd58fdcb15ce7fef879fdf915fd45fa6b",
+            "startedAt": 1794902896136,
+            "deadline": 1794903496136,
+            "requestFileSha256": "cbc56433912a3a431910ee8c0805fcc4053faa6209e9875c276ee48b16bc120e"
+          },
+          "launch": {
+            "attemptId": "astra-verification-e51c24c8-26f6-461f-93c2-c9a5cf7a4a4c",
+            "handle": "/root/live_defect_astra",
+            "binding": {
+              "id": "astra",
+              "model": "gpt-6-astra",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902933705
+          },
+          "transport": {
+            "attemptId": "astra-verification-e51c24c8-26f6-461f-93c2-c9a5cf7a4a4c",
+            "handle": "/root/live_defect_astra",
+            "binding": {
+              "id": "astra",
+              "model": "gpt-6-astra",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902986664,
+            "outcome": "succeeded",
+            "evidence": "Native final assistant response from matching handle; final event recorded at 2026-11-17T08:09:05.186Z",
+            "limits": "Configured override only; resolved identity unknown; prompt-only isolation; automatic deadline, descendants and remote shutdown unqualified"
+          },
+          "responseSha256": "6f0104fbdd3b01f243819bb68e3b347b3b1831c77dd229607c9c4579a621e8fd",
+          "transportSha256": "9795fa1b813b87f13264ae732f34ae92cbbfbc00bd80b3fbf085952401b7a64d",
+          "reservationToFinalObservationMs": 90528
+        },
+        {
+          "attempt": {
+            "attemptId": "sol-discovery-f47d13b1-e471-4e0b-93f6-715c2a9cb5cf",
+            "expert": "sol",
+            "phase": "discovery",
+            "retry": false,
+            "snapshotSha256": "b39a7c1e96f28e3028a43f973c329e9bfea6b457368ff8bd0ba6fb1d6e810c4f",
+            "requestSha256": "94f00d83bcab4ed88e5036a65a2887f176b8130850bf0cd0dce869ae5a6ee5fc",
+            "overlaySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "startedAt": 1794902605134,
+            "deadline": 1794903205134,
+            "requestFileSha256": "79b56a7d0262cbde5f5c6eac20bad04de2846eeda69ada403b8357ae2d20b4e7"
+          },
+          "launch": {
+            "attemptId": "sol-discovery-f47d13b1-e471-4e0b-93f6-715c2a9cb5cf",
+            "handle": "/root/live_defect_sol",
+            "binding": {
+              "id": "sol",
+              "model": "gpt-6.1-sol",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902636154
+          },
+          "transport": {
+            "attemptId": "sol-discovery-f47d13b1-e471-4e0b-93f6-715c2a9cb5cf",
+            "handle": "/root/live_defect_sol",
+            "binding": {
+              "id": "sol",
+              "model": "gpt-6.1-sol",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902755356,
+            "outcome": "succeeded",
+            "evidence": "Native final assistant response from matching handle; final event recorded at 2026-11-17T08:04:23.012Z",
+            "limits": "Configured override only; resolved identity unknown; prompt-only isolation; automatic deadline, descendants and remote shutdown unqualified"
+          },
+          "responseSha256": "af69e5f38eb8ecfc9a9e14251fc27556f5e57a097d27d06a28482ed5108520c1",
+          "transportSha256": "ba29b63e429fad99929b74165169eb787da52cd672921ce709102055ae584f14",
+          "reservationToFinalObservationMs": 150222
+        },
+        {
+          "attempt": {
+            "attemptId": "sol-verification-d7697910-324c-4522-9963-330d0d7f1748",
+            "expert": "sol",
+            "phase": "verification",
+            "retry": false,
+            "snapshotSha256": "b39a7c1e96f28e3028a43f973c329e9bfea6b457368ff8bd0ba6fb1d6e810c4f",
+            "requestSha256": "16393e192c0cabcc0d133f712c87e4f865341f426b2bcc0bb1fb9a15bd9088d9",
+            "overlaySha256": "231d2fab3487b86740bdb2fec3f3b11fd58fdcb15ce7fef879fdf915fd45fa6b",
+            "startedAt": 1794902896116,
+            "deadline": 1794903496116,
+            "requestFileSha256": "f778585de01fb490c91eb8fcf5855043c9642bda08dbadc4a8f4520b283ebbd2"
+          },
+          "launch": {
+            "attemptId": "sol-verification-d7697910-324c-4522-9963-330d0d7f1748",
+            "handle": "/root/live_defect_sol",
+            "binding": {
+              "id": "sol",
+              "model": "gpt-6.1-sol",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902933661
+          },
+          "transport": {
+            "attemptId": "sol-verification-d7697910-324c-4522-9963-330d0d7f1748",
+            "handle": "/root/live_defect_sol",
+            "binding": {
+              "id": "sol",
+              "model": "gpt-6.1-sol",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902986637,
+            "outcome": "succeeded",
+            "evidence": "Native final assistant response from matching handle; final event recorded at 2026-11-17T08:08:54.817Z",
+            "limits": "Configured override only; resolved identity unknown; prompt-only isolation; automatic deadline, descendants and remote shutdown unqualified"
+          },
+          "responseSha256": "23c501ab483aac3891713ca48af45c91eec5218be69f0bc029c84887eda0c9c3",
+          "transportSha256": "cb708382facebb28d079f874dd4a5d8f4290d50654d37cde03a9195615bceff9",
+          "reservationToFinalObservationMs": 90521
+        }
+      ],
+      "elapsedToLastObservationMs": 381547
+    },
+    "clean": {
+      "run": {
+        "repo": "/private/tmp/cr11-live/clean-repo",
+        "base": "f6361982df4037f530c954cb205bd00df3c6184c",
+        "head": "bd46770b9eb38e520162e4088a9c78c42b4de340",
+        "baseSelector": "base",
+        "headSelector": "review-head",
+        "diffArgs": [
+          "diff",
+          "--no-ext-diff",
+          "--no-textconv",
+          "--binary",
+          "--no-color",
+          "--no-renames"
+        ],
+        "diffSha256": "9286776f115e8e39d747f627e0739590b5d4ebc482f30a98ba6cc039398362f9",
+        "experts": [
+          {
+            "id": "sol",
+            "model": "gpt-6.1-sol",
+            "provider": "OpenAI",
+            "harness": "native collaboration"
+          },
+          {
+            "id": "astra",
+            "model": "gpt-6-astra",
+            "provider": "OpenAI",
+            "harness": "native collaboration"
+          }
+        ],
+        "mode": "review",
+        "startedAt": 1794902605209,
+        "deadline": 1794904405209,
+        "callMs": 600000,
+        "maxCalls": 6,
+        "snapshotSha256": "6a01d5493e83de77730a5fd5fa705f022a3e7b2e7f12f65f850668f55c6b4943"
+      },
+      "receipts": [
+        {
+          "attempt": {
+            "attemptId": "astra-discovery-db538985-10dd-45e2-a7c8-ebf90d3193fd",
+            "expert": "astra",
+            "phase": "discovery",
+            "retry": false,
+            "snapshotSha256": "6a01d5493e83de77730a5fd5fa705f022a3e7b2e7f12f65f850668f55c6b4943",
+            "requestSha256": "a648ba793ad2cc9aaccd8b46049e5e318b5c921e356a1bedcf732b74ef31c63d",
+            "overlaySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "startedAt": 1794902605240,
+            "deadline": 1794903205240,
+            "requestFileSha256": "386cc645359d9acb68a89307a24859ebb09eb9d023caf856428726eded43152f"
+          },
+          "launch": {
+            "attemptId": "astra-discovery-db538985-10dd-45e2-a7c8-ebf90d3193fd",
+            "handle": "/root/live_clean_astra",
+            "binding": {
+              "id": "astra",
+              "model": "gpt-6-astra",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902845712
+          },
+          "transport": {
+            "attemptId": "astra-discovery-db538985-10dd-45e2-a7c8-ebf90d3193fd",
+            "handle": "/root/live_clean_astra",
+            "binding": {
+              "id": "astra",
+              "model": "gpt-6-astra",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902895954,
+            "outcome": "succeeded",
+            "evidence": "Native final assistant response from matching handle; final event recorded at 2026-11-17T08:06:33.154Z",
+            "limits": "Configured override only; resolved identity unknown; prompt-only isolation; automatic deadline, descendants and remote shutdown unqualified"
+          },
+          "responseSha256": "7b0a5940f942fe669bcd47dd51a4e309b1c84a1491e7cada6d6910fb81b0a8d6",
+          "transportSha256": "5460f77de2b03fe7aa10fa2819b162d0d8d66d3dfcb70310fa28e53bafdd34ff",
+          "reservationToFinalObservationMs": 290714
+        },
+        {
+          "attempt": {
+            "attemptId": "sol-discovery-50bd76d2-6785-425b-9c19-c1132b3fd03a",
+            "expert": "sol",
+            "phase": "discovery",
+            "retry": false,
+            "snapshotSha256": "6a01d5493e83de77730a5fd5fa705f022a3e7b2e7f12f65f850668f55c6b4943",
+            "requestSha256": "a648ba793ad2cc9aaccd8b46049e5e318b5c921e356a1bedcf732b74ef31c63d",
+            "overlaySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "startedAt": 1794902605224,
+            "deadline": 1794903205224,
+            "requestFileSha256": "e711c5d5688733ade508dca422ec402d44f767d9efed364123091198f59b8d85"
+          },
+          "launch": {
+            "attemptId": "sol-discovery-50bd76d2-6785-425b-9c19-c1132b3fd03a",
+            "handle": "/root/live_clean_sol",
+            "binding": {
+              "id": "sol",
+              "model": "gpt-6.1-sol",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902732592
+          },
+          "transport": {
+            "attemptId": "sol-discovery-50bd76d2-6785-425b-9c19-c1132b3fd03a",
+            "handle": "/root/live_clean_sol",
+            "binding": {
+              "id": "sol",
+              "model": "gpt-6.1-sol",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902755404,
+            "outcome": "succeeded",
+            "evidence": "Native final assistant response from matching handle; final event recorded at 2026-11-17T08:04:37.096Z",
+            "limits": "Configured override only; resolved identity unknown; prompt-only isolation; automatic deadline, descendants and remote shutdown unqualified"
+          },
+          "responseSha256": "29cb1b32da69aa2253773d7740cc998edbe3a410edac421adbb30b1696c2c96f",
+          "transportSha256": "39b8cb160dc4365d1e5cc5203c0d7576ee9a0278313f4ca096f4f81098311ce7",
+          "reservationToFinalObservationMs": 150180
+        }
+      ],
+      "elapsedToLastObservationMs": 290745
+    },
+    "advisory": {
+      "run": {
+        "repo": "/private/tmp/cr11-live/advisory-repo",
+        "base": "176fa8c1cebf93de163f9de8748be3a6e7acacb6",
+        "head": "47a36b0f4a2937ea7b518680aa48cb2e0b9ca052",
+        "baseSelector": "base",
+        "headSelector": "review-head",
+        "diffArgs": [
+          "diff",
+          "--no-ext-diff",
+          "--no-textconv",
+          "--binary",
+          "--no-color",
+          "--no-renames"
+        ],
+        "diffSha256": "bd5495cb1b8fccd6e4c7c54cd4452dcbb1765892002ed293986c02661b01e440",
+        "experts": [
+          {
+            "id": "sol",
+            "model": "gpt-6.1-sol",
+            "provider": "OpenAI",
+            "harness": "native collaboration"
+          },
+          {
+            "id": "astra",
+            "model": "gpt-6-astra",
+            "provider": "OpenAI",
+            "harness": "native collaboration"
+          }
+        ],
+        "mode": "review",
+        "startedAt": 1794902605297,
+        "deadline": 1794904405297,
+        "callMs": 600000,
+        "maxCalls": 6,
+        "snapshotSha256": "6442ed04aa2fe04ed97ca948ae1b93f6760fa9f9de2d6bc7364795ece16fc76a"
+      },
+      "receipts": [
+        {
+          "attempt": {
+            "attemptId": "astra-discovery-9aacb52a-0f24-4679-a11c-909a565ffb05",
+            "expert": "astra",
+            "phase": "discovery",
+            "retry": false,
+            "snapshotSha256": "6442ed04aa2fe04ed97ca948ae1b93f6760fa9f9de2d6bc7364795ece16fc76a",
+            "requestSha256": "15ddafc69668d339dafa89ed99a0298ba9333fe934d574f3701d50127dde844a",
+            "overlaySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "startedAt": 1794902605328,
+            "deadline": 1794903205328,
+            "requestFileSha256": "c7249aaa97d06e45c4fc92eaee894e5760b67d297115401ca319239a145c25bd"
+          },
+          "launch": {
+            "attemptId": "astra-discovery-9aacb52a-0f24-4679-a11c-909a565ffb05",
+            "handle": "/root/live_advisory_astra",
+            "binding": {
+              "id": "astra",
+              "model": "gpt-6-astra",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902845794
+          },
+          "transport": {
+            "attemptId": "astra-discovery-9aacb52a-0f24-4679-a11c-909a565ffb05",
+            "handle": "/root/live_advisory_astra",
+            "binding": {
+              "id": "astra",
+              "model": "gpt-6-astra",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902896006,
+            "outcome": "succeeded",
+            "evidence": "Native final assistant response from matching handle; final event recorded at 2026-11-17T08:06:55.966Z",
+            "limits": "Configured override only; resolved identity unknown; prompt-only isolation; automatic deadline, descendants and remote shutdown unqualified"
+          },
+          "responseSha256": "ca9bda3645c27898262ccabf020b08f106c3672f0b0b4abc0c10dcc4fc25d139",
+          "transportSha256": "8072eeed3d0de5fa1de6402bf543ef41e7476ce537182be42881cfb81e51a0f6",
+          "reservationToFinalObservationMs": 290678
+        },
+        {
+          "attempt": {
+            "attemptId": "sol-discovery-6ef1aeae-479f-4e6b-9300-9def00133d22",
+            "expert": "sol",
+            "phase": "discovery",
+            "retry": false,
+            "snapshotSha256": "6442ed04aa2fe04ed97ca948ae1b93f6760fa9f9de2d6bc7364795ece16fc76a",
+            "requestSha256": "15ddafc69668d339dafa89ed99a0298ba9333fe934d574f3701d50127dde844a",
+            "overlaySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "startedAt": 1794902605313,
+            "deadline": 1794903205313,
+            "requestFileSha256": "7c9f21948a2d580851da633e768be6fdf403d9eb27cfa3495dc3141b46ecf76f"
+          },
+          "launch": {
+            "attemptId": "sol-discovery-6ef1aeae-479f-4e6b-9300-9def00133d22",
+            "handle": "/root/live_advisory_sol",
+            "binding": {
+              "id": "sol",
+              "model": "gpt-6.1-sol",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902845753
+          },
+          "transport": {
+            "attemptId": "sol-discovery-6ef1aeae-479f-4e6b-9300-9def00133d22",
+            "handle": "/root/live_advisory_sol",
+            "binding": {
+              "id": "sol",
+              "model": "gpt-6.1-sol",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794902895980,
+            "outcome": "succeeded",
+            "evidence": "Native final assistant response from matching handle; final event recorded at 2026-11-17T08:06:41.265Z",
+            "limits": "Configured override only; resolved identity unknown; prompt-only isolation; automatic deadline, descendants and remote shutdown unqualified"
+          },
+          "responseSha256": "2f2f1f9d6b94e3c8bcbf2c060a621688bde8a4e92b8baed748daedbc61fb2585",
+          "transportSha256": "7c52cfb104ec27e882f6c56731171ad55736a2410b6670c407c03cb53a765872",
+          "reservationToFinalObservationMs": 290667
+        }
+      ],
+      "elapsedToLastObservationMs": 290709
+    },
+    "dispute": {
+      "run": {
+        "repo": "/private/tmp/cr11-live/clean-repo",
+        "base": "f6361982df4037f530c954cb205bd00df3c6184c",
+        "head": "bd46770b9eb38e520162e4088a9c78c42b4de340",
+        "baseSelector": "base",
+        "headSelector": "review-head",
+        "diffArgs": [
+          "diff",
+          "--no-ext-diff",
+          "--no-textconv",
+          "--binary",
+          "--no-color",
+          "--no-renames"
+        ],
+        "diffSha256": "9286776f115e8e39d747f627e0739590b5d4ebc482f30a98ba6cc039398362f9",
+        "experts": [
+          {
+            "id": "sol",
+            "model": "gpt-6.1-sol",
+            "provider": "OpenAI",
+            "harness": "native collaboration"
+          },
+          {
+            "id": "astra",
+            "model": "gpt-6-astra",
+            "provider": "OpenAI",
+            "harness": "native collaboration"
+          }
+        ],
+        "mode": "review",
+        "startedAt": 1794921982505,
+        "deadline": 1794922882505,
+        "callMs": 300000,
+        "maxCalls": 6,
+        "snapshotSha256": "0f098f805dd3552e20029c56262ef39fcff807fded9c23f3c55fe50d07572975"
+      },
+      "receipts": [
+        {
+          "attempt": {
+            "attemptId": "astra-challenge-d18e9171-dba2-4c1e-a5f2-3f4eee6f1687",
+            "expert": "astra",
+            "phase": "challenge",
+            "retry": false,
+            "snapshotSha256": "0f098f805dd3552e20029c56262ef39fcff807fded9c23f3c55fe50d07572975",
+            "requestSha256": "afcb9d3efa87e9bf5d040cfb25e2c32b473719f849cf2fb2d4dd5e9eb7affcf6",
+            "overlaySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "startedAt": 1794922083948,
+            "deadline": 1794922383948,
+            "requestFileSha256": "ae5a3f34f60dcdd8e36c6974a83062c73659e7cff9c37534a73c15d28cdf25d5"
+          },
+          "launch": {
+            "attemptId": "astra-challenge-d18e9171-dba2-4c1e-a5f2-3f4eee6f1687",
+            "handle": "/root/dispute_astra",
+            "binding": {
+              "id": "astra",
+              "model": "gpt-6-astra",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794922106375
+          },
+          "transport": {
+            "attemptId": "astra-challenge-d18e9171-dba2-4c1e-a5f2-3f4eee6f1687",
+            "handle": "/root/dispute_astra",
+            "binding": {
+              "id": "astra",
+              "model": "gpt-6-astra",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794922162676,
+            "outcome": "succeeded",
+            "evidence": "Native final assistant response from matching handle; final event recorded at 2026-11-17T13:28:47.752Z",
+            "limits": "Configured override only; resolved identity unknown; prompt-only isolation; automatic deadline, descendants and remote shutdown unqualified"
+          },
+          "responseSha256": "079cf765fbe61564a6172ec6b907753b8605f28cfb156962d59322fd26fc3a0b",
+          "transportSha256": "9d236175b2b3cc929241331f0b1bde3720e83e4452dd15bf225584a1ef4f9c66",
+          "reservationToFinalObservationMs": 78728
+        },
+        {
+          "attempt": {
+            "attemptId": "astra-discovery-7c6cee0a-2922-4f0a-9993-3ad1f1af82e6",
+            "expert": "astra",
+            "phase": "discovery",
+            "retry": false,
+            "snapshotSha256": "0f098f805dd3552e20029c56262ef39fcff807fded9c23f3c55fe50d07572975",
+            "requestSha256": "db92a9aa5d801f960057b951ca5705d639ba2caf4eff248ef735984b2ecbe2da",
+            "overlaySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "startedAt": 1794921982538,
+            "deadline": 1794922282538,
+            "requestFileSha256": "0b5b98a5bcd1bc6fad14982595c0c10a02d753348efc80846053106cda417d1c"
+          },
+          "launch": {
+            "attemptId": "astra-discovery-7c6cee0a-2922-4f0a-9993-3ad1f1af82e6",
+            "handle": "/root/dispute_astra",
+            "binding": {
+              "id": "astra",
+              "model": "gpt-6-astra",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794922006500
+          },
+          "transport": {
+            "attemptId": "astra-discovery-7c6cee0a-2922-4f0a-9993-3ad1f1af82e6",
+            "handle": "/root/dispute_astra",
+            "binding": {
+              "id": "astra",
+              "model": "gpt-6-astra",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794922083861,
+            "outcome": "succeeded",
+            "evidence": "Native final assistant response from matching handle; final event recorded at 2026-11-17T13:27:15.559Z",
+            "limits": "Configured override only; resolved identity unknown; prompt-only isolation; automatic deadline, descendants and remote shutdown unqualified"
+          },
+          "responseSha256": "3e19d59a90db67cb16550c4be02d459107c95e15908c62bba16a2025ca0a65e5",
+          "transportSha256": "e1e9c8b71e8c806fab62a36d1e8b1873d98fe422679c00700797fa6cce329777",
+          "reservationToFinalObservationMs": 101323
+        },
+        {
+          "attempt": {
+            "attemptId": "sol-challenge-e861effc-a7a4-4bed-bd05-898ea1e3cb67",
+            "expert": "sol",
+            "phase": "challenge",
+            "retry": false,
+            "snapshotSha256": "0f098f805dd3552e20029c56262ef39fcff807fded9c23f3c55fe50d07572975",
+            "requestSha256": "afcb9d3efa87e9bf5d040cfb25e2c32b473719f849cf2fb2d4dd5e9eb7affcf6",
+            "overlaySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "startedAt": 1794922083929,
+            "deadline": 1794922383929,
+            "requestFileSha256": "cb998902a9f0c350cdd5e75ee25b362b27c8d305a36c3ae77a64f652fa417d7d"
+          },
+          "launch": {
+            "attemptId": "sol-challenge-e861effc-a7a4-4bed-bd05-898ea1e3cb67",
+            "handle": "/root/dispute_sol",
+            "binding": {
+              "id": "sol",
+              "model": "gpt-6.1-sol",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794922106334
+          },
+          "transport": {
+            "attemptId": "sol-challenge-e861effc-a7a4-4bed-bd05-898ea1e3cb67",
+            "handle": "/root/dispute_sol",
+            "binding": {
+              "id": "sol",
+              "model": "gpt-6.1-sol",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794922162647,
+            "outcome": "succeeded",
+            "evidence": "Native final assistant response from matching handle; final event recorded at 2026-11-17T13:28:42.497Z",
+            "limits": "Configured override only; resolved identity unknown; prompt-only isolation; automatic deadline, descendants and remote shutdown unqualified"
+          },
+          "responseSha256": "cfd7bd903fd7d5151025ccd5fc8fee6b4b51ba9dc72934f28105b719e8314c27",
+          "transportSha256": "59eca23bb6315c28ec12ee9593605a79e29b8c493051f6e1f29fa2d502957922",
+          "reservationToFinalObservationMs": 78718
+        },
+        {
+          "attempt": {
+            "attemptId": "sol-discovery-24358b8b-5155-4f2d-a58e-435d8e19e222",
+            "expert": "sol",
+            "phase": "discovery",
+            "retry": false,
+            "snapshotSha256": "0f098f805dd3552e20029c56262ef39fcff807fded9c23f3c55fe50d07572975",
+            "requestSha256": "db92a9aa5d801f960057b951ca5705d639ba2caf4eff248ef735984b2ecbe2da",
+            "overlaySha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "startedAt": 1794921982522,
+            "deadline": 1794922282522,
+            "requestFileSha256": "cc6afd78680862792f599e41367712b0c6aa222e532c50814e0388580739a384"
+          },
+          "launch": {
+            "attemptId": "sol-discovery-24358b8b-5155-4f2d-a58e-435d8e19e222",
+            "handle": "/root/dispute_sol",
+            "binding": {
+              "id": "sol",
+              "model": "gpt-6.1-sol",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794922006460
+          },
+          "transport": {
+            "attemptId": "sol-discovery-24358b8b-5155-4f2d-a58e-435d8e19e222",
+            "handle": "/root/dispute_sol",
+            "binding": {
+              "id": "sol",
+              "model": "gpt-6.1-sol",
+              "provider": "OpenAI",
+              "harness": "native collaboration"
+            },
+            "observedAt": 1794922083832,
+            "outcome": "succeeded",
+            "evidence": "Native final assistant response from matching handle; final event recorded at 2026-11-17T13:27:11.109Z",
+            "limits": "Configured override only; resolved identity unknown; prompt-only isolation; automatic deadline, descendants and remote shutdown unqualified"
+          },
+          "responseSha256": "99d3e21e77f2c242d8b840ea58e43039d66933253d938d69ce3451128942d5e1",
+          "transportSha256": "1ac48c0f797285d6dc5ba4b389733b61d65df75d689bb350d688441075c660cd",
+          "reservationToFinalObservationMs": 101310
+        }
+      ],
+      "elapsedToLastObservationMs": 180171
+    }
+  },
+  "calls": 14,
+  "retries": 0,
+  "limits": [
+    "Configured models, resolved identity unknown",
+    "Same-provider only",
+    "Prompt-only isolation",
+    "No automatic timeout or coordinator-loss cleanup qualification",
+    "No remote-shutdown or external-process guarantee"
+  ],
+  "recordedAt": 1794922162796,
+  "acceptedCalls": 12,
+  "unacceptedLateLaunches": 2
+}

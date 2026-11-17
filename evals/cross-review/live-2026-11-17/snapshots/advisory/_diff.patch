@@ -1,0 +1,11 @@
+diff --git a/change.mjs b/change.mjs
+index 96e8348..2f6eec6 100644
+--- a/change.mjs
++++ b/change.mjs
+@@ -1 +1,5 @@
+-export const double = (values) => values.map(value => value * 2);
++export const double = (values) => {
++  const r = [];
++  for (const x of values) r.push(x * 2);
++  return r;
++};

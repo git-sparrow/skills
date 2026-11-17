@@ -1,0 +1,19 @@
+{
+  "observedAt": 1794921982482,
+  "reason": "Session pause crossed original deadline. Coordinator mistakenly dispatched reserved challenges before fresh preflight; launched refused expired deadlines. No late output accepted.",
+  "attempts": [
+    {
+      "attemptId": "sol-challenge-dd3a0886-374a-43e7-9b1e-576dea6a311f",
+      "handle": "/root/live_clean_sol",
+      "terminal": "completed",
+      "accepted": false
+    },
+    {
+      "attemptId": "astra-challenge-76a1ed44-3d95-4e82-8912-b55e3f27abf9",
+      "handle": "/root/live_clean_astra",
+      "terminal": "interrupted",
+      "accepted": false
+    }
+  ],
+  "continuation": "User requested continue; new four-call 15-minute evaluation only to exercise seeded dispute handling. Prior completed discovery/repair evidence remains historical."
+}
