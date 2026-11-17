@@ -1,39 +1,16 @@
 #!/usr/bin/env node
-import { createHash, randomUUID } from "node:crypto";
+import { randomUUID } from "node:crypto";
 import {
-  copyFileSync, existsSync, lstatSync, mkdirSync, readdirSync, readFileSync,
-  realpathSync, writeFileSync,
+  copyFileSync, existsSync, mkdirSync, readdirSync,
+  realpathSync,
 } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { digest, read, json, write, writeJson, requireThat, files, hashes } from "../../../lib/artifacts.mjs";
+
 const skill = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const phases = ["proposal", "challenge-1", "challenge-2"];
-const digest = (value) => createHash("sha256").update(value).digest("hex");
-const read = (file) => readFileSync(file, "utf8");
-const json = (file) => JSON.parse(read(file));
-const write = (file, value) => writeFileSync(file, value, { flag: "wx" });
-const writeJson = (file, value) => write(file, `${JSON.stringify(value, null, 2)}\n`);
-const requireThat = (condition, message) => {
-  if (!condition) throw new Error(message);
-};
-
-function files(dir, relative = "") {
-  return readdirSync(path.join(dir, relative)).sort().flatMap((name) => {
-    const entry = path.join(relative, name);
-    const stat = lstatSync(path.join(dir, entry));
-    requireThat(!stat.isSymbolicLink(), `Snapshot symlink: ${entry}`);
-    if (stat.isDirectory()) return files(dir, entry);
-    requireThat(stat.isFile(), `Not a regular file: ${entry}`);
-    return [entry];
-  });
-}
-
-function hashes(dir) {
-  return Object.fromEntries(files(dir).map((file) =>
-    [file, digest(readFileSync(path.join(dir, file)))],
-  ));
-}
 
 function loadRun(run) {
   const state = json(path.join(run, "run.json"));

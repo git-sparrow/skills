@@ -1,0 +1,38 @@
+{
+  "base": [
+    {
+      "input": "",
+      "result": "Hello, "
+    },
+    {
+      "input": "   ",
+      "result": "Hello,    "
+    },
+    {
+      "input": "  Ada  ",
+      "result": "Hello,   Ada  "
+    },
+    {
+      "input": " A B ",
+      "result": "Hello,  A B "
+    }
+  ],
+  "review-head": [
+    {
+      "input": "",
+      "result": "Hello, "
+    },
+    {
+      "input": "   ",
+      "result": "Hello, "
+    },
+    {
+      "input": "  Ada  ",
+      "result": "Hello, Ada"
+    },
+    {
+      "input": " A B ",
+      "result": "Hello, A B"
+    }
+  ]
+}

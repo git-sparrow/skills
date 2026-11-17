@@ -1,0 +1,22 @@
+{
+  "attemptId": "sol-discovery-f47d13b1-e471-4e0b-93f6-715c2a9cb5cf",
+  "snapshotSha256": "b39a7c1e96f28e3028a43f973c329e9bfea6b457368ff8bd0ba6fb1d6e810c4f",
+  "requestSha256": "94f00d83bcab4ed88e5036a65a2887f176b8130850bf0cd0dce869ae5a6ee5fc",
+  "completion": "COMPLETE",
+  "analysis": "The sole change replaces the reservation cap with the larger operand. The unchanged caller subtracts this result directly from stock. For requested > stock, the new result is negative; for requested < stock, it removes all stock despite a smaller request. Equal operands remain correct, but that case does not establish correctness across the contracted domain. Both failures arise from the same changed operator and were absent at base.",
+  "coverage": "Read every snapshot input, including contract, diff, review provenance and generic discovery/challenge/verification material. Inspected the pinned head file inventory and both change.mjs and caller.mjs at base and head. The two-file repository contains one affected caller. Release was excluded as requested.",
+  "limitations": [
+    "Source reasoning only; no project code or executable checks were run, as instructed."
+  ],
+  "findings": [
+    {
+      "id": "SOL-1",
+      "location": "change.mjs:1",
+      "claim": "Math.max causes reserve to overdraw stock when demand exceeds stock and to over-fulfill smaller requests.",
+      "evidence": "At head, allowed(requested, available) returns Math.max(requested, available), and caller.mjs:2 returns stock - allowed(requested, stock). Thus reserve(3, 5) evaluates to -2, violating the nonnegative-stock invariant; reserve(5, 2) evaluates to 0 rather than 3, consuming three extra units. At base, Math.min produces 0 and 3 respectively. Restore the cap so the reserved quantity is min(requested, stock).",
+      "confidence": "high",
+      "impact": "behavioral",
+      "disposition": "proposed"
+    }
+  ]
+}

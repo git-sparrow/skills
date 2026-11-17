@@ -1,0 +1,10 @@
+{
+  "review": "COMPLETE",
+  "currency": "current",
+  "blocking": [],
+  "unresolved": [],
+  "findings": [],
+  "adjudication": [],
+  "calls": 2,
+  "readiness": "Coordinator must report scoped checks and limitations; completion is not merge approval"
+}

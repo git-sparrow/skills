@@ -1,0 +1,13 @@
+{
+  "attemptId": "astra-verification-e51c24c8-26f6-461f-93c2-c9a5cf7a4a4c",
+  "snapshotSha256": "b39a7c1e96f28e3028a43f973c329e9bfea6b457368ff8bd0ba6fb1d6e810c4f",
+  "requestSha256": "16393e192c0cabcc0d133f712c87e4f865341f426b2bcc0bb1fb9a15bd9088d9",
+  "completion": "COMPLETE",
+  "analysis": "R1, comprising sol-discovery-f47d13b1-e471-4e0b-93f6-715c2a9cb5cf/SOL-1 and astra-discovery-c922dd48-9c47-464a-ba90-c725d9b68498/ASTRA-001, is fixed by the captured overlay. Restoring Math.min makes the unchanged caller compute stock - min(requested, stock). For nonnegative integer inputs, fulfillment is bounded by both demand and stock: requests at or above stock leave zero, and smaller requests leave stock minus requested. This eliminates both negative remaining stock and excess consumption, including zero-request behavior. The recorded base/head examples distinguish the regression, and the reported 121 passing repair checks cover every pair from 0 through 10, including all ordering and zero-boundary cases. Those finite checks corroborate the fix; the expression's bounds establish the general scoped invariant. No newly introduced risk is apparent in this exact restoration.",
+  "coverage": "Read every snapshot input and the focused packet, including the exact tracked repair overlay. Inspected change.mjs and caller.mjs at both pinned commits using git show. Verified the overlay against the original defect and unchanged caller, and assessed the recorded focused checks. This is focused verification of the captured overlay, not a new review of a committed repair head.",
+  "limitations": [
+    "Executable checks were supplied by the coordinator and were not independently rerun.",
+    "The repair assessment applies to the exact captured tracked overlay; the pinned head itself still contains Math.max."
+  ],
+  "findings": []
+}

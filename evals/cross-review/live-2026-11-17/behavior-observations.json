@@ -1,0 +1,53 @@
+{
+  "base": [
+    {
+      "args": [
+        3,
+        5
+      ],
+      "result": 0
+    },
+    {
+      "args": [
+        5,
+        2
+      ],
+      "result": 3
+    },
+    {
+      "args": [
+        5,
+        0
+      ],
+      "result": 5
+    }
+  ],
+  "review-head": [
+    {
+      "args": [
+        3,
+        5
+      ],
+      "result": -2
+    },
+    {
+      "args": [
+        5,
+        2
+      ],
+      "result": 0
+    },
+    {
+      "args": [
+        5,
+        0
+      ],
+      "result": 0
+    }
+  ],
+  "repair": {
+    "checks": 121,
+    "description": "121 stock/request pairs from 0 through 10; remaining stock equals stock - min(stock, requested)",
+    "passed": true
+  }
+}

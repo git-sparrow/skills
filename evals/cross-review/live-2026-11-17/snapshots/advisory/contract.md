@@ -1,0 +1,1 @@
+Inputs are dense arrays of finite numbers. Return a fresh array of doubled values in order without mutating input. Sparse arrays and custom iterators are out of scope. Repository guidance: descriptive local names are preferred as advisory style guidance, never a behavioral blocking criterion. Release is excluded.

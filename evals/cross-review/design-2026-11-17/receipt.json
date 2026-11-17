@@ -1,0 +1,146 @@
+{
+  "experts": [
+    {
+      "id": "sol",
+      "model": "gpt-6.1-sol",
+      "provider": "OpenAI",
+      "harness": "native collaboration",
+      "identityLimits": "Configured override; resolved identity unavailable; prompt-only isolation"
+    },
+    {
+      "id": "astra",
+      "model": "gpt-6-astra",
+      "provider": "OpenAI",
+      "harness": "native collaboration",
+      "identityLimits": "Configured override; resolved identity unavailable; prompt-only isolation"
+    }
+  ],
+  "inputs": {
+    "_challenge.md": "52c48dd22cea85bcf9ed3801e4a683762783410ee8b83d39c9b610abd42936d2",
+    "_proposal.md": "aba697b71acbac0c1bd99ba8b547c2cab4339fcc21a7766bb4a830b40a9d7c21",
+    "brief.md": "25f04361acaf8eb9f29f9bde551ac8a30d7b8b84ba45c74927618d52798e3783"
+  },
+  "snapshotSha256": "9c8f54c38ad99d51f26faab9998e762ef9b16d5a7d96959065c1b98fd0ee327b",
+  "startedAt": 1794901841989,
+  "deadline": 1794903641989,
+  "callMs": 600000,
+  "receipts": [
+    {
+      "attempt": {
+        "attemptId": "astra-challenge-1-af32e5e5-3515-4233-8ea7-3b5bf5295809",
+        "expert": "astra",
+        "phase": "challenge-1",
+        "retry": false,
+        "snapshotSha256": "9c8f54c38ad99d51f26faab9998e762ef9b16d5a7d96959065c1b98fd0ee327b",
+        "requestSha256": "aff4707a913031fcaaab50db76db163d1024106ddde570c2b3e7dee0ea731296",
+        "candidateSha256": "19bbf762a7eb9fe992871debd208fd228bf637f3d8a4a761ee00db672602e144",
+        "evidenceSha256": "44a7662699003cf97e0880155fa92eee9b42dc40fe8a1b47a1d33c5ccfcbbab0",
+        "startedAt": 1794902145787,
+        "deadline": 1794902745787,
+        "requestFileSha256": "8ad77648f575b8379f44f2b838d2b67bc39d05f429270005b24973c7e5047b9d"
+      },
+      "transport": {
+        "attemptId": "astra-challenge-1-af32e5e5-3515-4233-8ea7-3b5bf5295809",
+        "handle": "/root/design_astra",
+        "outcome": "succeeded",
+        "observedAt": "2026-11-17T07:57:54.079112+00:00",
+        "finalEventRecordedAt": "2026-11-17T07:57:20.503Z",
+        "dispatchTime": "unknown",
+        "terminalTime": "unknown",
+        "resolvedModel": "unknown",
+        "isolation": "prompt-only",
+        "cancellationScope": "managed turn only; automatic deadline and remote shutdown unqualified"
+      },
+      "acceptedResponseSha256": "ba36835c828ef139ab091b462a4fe4895b2c441d63cf2742bedb3bd45dc41da5"
+    },
+    {
+      "attempt": {
+        "attemptId": "astra-proposal-af6b4bd5-9535-4c30-87e5-29b81985ef0f",
+        "expert": "astra",
+        "phase": "proposal",
+        "retry": false,
+        "snapshotSha256": "9c8f54c38ad99d51f26faab9998e762ef9b16d5a7d96959065c1b98fd0ee327b",
+        "requestSha256": "32076fb4c5dfdf1cc9b4c730f2365fa0ba99d5976c10e8130aa4e4b2116fd85d",
+        "candidateSha256": null,
+        "evidenceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "startedAt": 1794901842041,
+        "deadline": 1794902442041,
+        "requestFileSha256": "011cb10975b6352705463b7caa91072e7dcc2b7c5163a1a79907e5aa4791f292"
+      },
+      "transport": {
+        "attemptId": "astra-proposal-af6b4bd5-9535-4c30-87e5-29b81985ef0f",
+        "handle": "/root/design_astra",
+        "outcome": "succeeded",
+        "observedAt": "2026-11-17T07:55:45.656780+00:00",
+        "finalEventRecordedAt": "2026-11-17T07:53:46.948Z",
+        "dispatchTime": "unknown",
+        "terminalTime": "unknown",
+        "resolvedModel": "unknown",
+        "isolation": "prompt-only",
+        "cancellationScope": "managed turn only; automatic deadline and remote shutdown unqualified"
+      },
+      "acceptedResponseSha256": "08ada65baf655fb69606a78f47ebb64b04bdb49bbfab3f41e5c24e8d950843ad"
+    },
+    {
+      "attempt": {
+        "attemptId": "sol-challenge-1-37f46f16-025d-4549-997e-8093a8bc50d1",
+        "expert": "sol",
+        "phase": "challenge-1",
+        "retry": false,
+        "snapshotSha256": "9c8f54c38ad99d51f26faab9998e762ef9b16d5a7d96959065c1b98fd0ee327b",
+        "requestSha256": "aff4707a913031fcaaab50db76db163d1024106ddde570c2b3e7dee0ea731296",
+        "candidateSha256": "19bbf762a7eb9fe992871debd208fd228bf637f3d8a4a761ee00db672602e144",
+        "evidenceSha256": "44a7662699003cf97e0880155fa92eee9b42dc40fe8a1b47a1d33c5ccfcbbab0",
+        "startedAt": 1794902145762,
+        "deadline": 1794902745762,
+        "requestFileSha256": "cb8f0b1dbd54d638e77e87f55a241602605c7509ccca519cffb8ec2d897b8e4e"
+      },
+      "transport": {
+        "attemptId": "sol-challenge-1-37f46f16-025d-4549-997e-8093a8bc50d1",
+        "handle": "/root/design_sol",
+        "outcome": "succeeded",
+        "observedAt": "2026-11-17T07:57:16.254147+00:00",
+        "finalEventRecordedAt": "2026-11-17T07:57:09.388Z",
+        "dispatchTime": "unknown",
+        "terminalTime": "unknown",
+        "resolvedModel": "unknown",
+        "isolation": "prompt-only",
+        "cancellationScope": "managed turn only; automatic deadline and remote shutdown unqualified"
+      },
+      "acceptedResponseSha256": "0d20cdffd3cdc69fc605490076abea6fab62cfed2653f46b2816d86949b6d4d1"
+    },
+    {
+      "attempt": {
+        "attemptId": "sol-proposal-2d95dadd-0e30-4fe6-af91-39fc8569b30a",
+        "expert": "sol",
+        "phase": "proposal",
+        "retry": false,
+        "snapshotSha256": "9c8f54c38ad99d51f26faab9998e762ef9b16d5a7d96959065c1b98fd0ee327b",
+        "requestSha256": "32076fb4c5dfdf1cc9b4c730f2365fa0ba99d5976c10e8130aa4e4b2116fd85d",
+        "candidateSha256": null,
+        "evidenceSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "startedAt": 1794901842017,
+        "deadline": 1794902442017,
+        "requestFileSha256": "0127ab9688cc68a1ff707e39f9c6764fc647ceaeeccff66e58f6e0e351850714"
+      },
+      "transport": {
+        "attemptId": "sol-proposal-2d95dadd-0e30-4fe6-af91-39fc8569b30a",
+        "handle": "/root/design_sol",
+        "outcome": "succeeded",
+        "observedAt": "2026-11-17T07:53:30.122139+00:00",
+        "finalEventRecordedAt": "2026-11-17T07:52:48.823Z",
+        "dispatchTime": "unknown",
+        "terminalTime": "unknown",
+        "resolvedModel": "unknown",
+        "isolation": "prompt-only",
+        "cancellationScope": "managed turn only; automatic deadline and remote shutdown unqualified"
+      },
+      "acceptedResponseSha256": "f24b70e235b7d1a23cd94aed0f50247d0cbdf314b37c2f2c2a7d6f4cf5fc761f"
+    }
+  ],
+  "recordedAt": 1794902274128,
+  "elapsedMs": 432139,
+  "calls": 4,
+  "retries": 0,
+  "challengeCycles": 1
+}

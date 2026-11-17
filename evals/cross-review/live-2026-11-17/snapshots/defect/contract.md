@@ -1,0 +1,1 @@
+For nonnegative integer stock and requested quantities, reserve must never return negative stock and should fulfill as much as available. This change claims to improve reservation behavior. Examine correctness and affected callers. Release is excluded.

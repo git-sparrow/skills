@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- Add `cross-review`: review-only by default, evidence-based adjudication, bounded targeted
+  challenge and optional repair with focused verification. Replaces the unmerged #9 design;
+  origin/contract: #11. [Design](evals/cross-review/design-2026-11-17/decision.md) and
+  [live evaluation evidence](evals/cross-review/live-2026-11-17/report.md) record limitations.
+  Share only artifact primitives with cross-design; retain its workflow and tests.
+  Release and consumer migration remain in #8.
+
 - Add `cross-design`: independent design proposals, bounded challenge, and a decision
   record that preserves dissent. Includes a helper for input snapshots, distinct
   attempts, response validation and consultation budgets. Origin: #12.

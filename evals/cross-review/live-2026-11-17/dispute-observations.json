@@ -1,0 +1,30 @@
+{
+  "base": [
+    {
+      "input": null,
+      "result": "Hello, null"
+    },
+    {
+      "input": 42,
+      "result": "Hello, 42"
+    },
+    {
+      "input": "  Ada  ",
+      "result": "Hello,   Ada  "
+    }
+  ],
+  "review-head": [
+    {
+      "input": null,
+      "error": "TypeError"
+    },
+    {
+      "input": 42,
+      "error": "TypeError"
+    },
+    {
+      "input": "  Ada  ",
+      "result": "Hello, Ada"
+    }
+  ]
+}

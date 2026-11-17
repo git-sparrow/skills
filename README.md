@@ -11,6 +11,11 @@ Each skill comes from a real incident, and the PR that added it shows the skill 
 | `adopt-tech` | [git-sparrow/kavtsya#303](https://github.com/git-sparrow/kavtsya/issues/303): a scaffold written for the previous major after the version check had passed | [#2](https://github.com/git-sparrow/skills/pull/2), and the hand-run eval recorded in [#3](https://github.com/git-sparrow/skills/issues/3) |
 | `trim-redundancy` | [git-sparrow/kavtsya#305](https://github.com/git-sparrow/kavtsya/pull/305): a redundant incident recap in the docs | [#4](https://github.com/git-sparrow/skills/pull/4) |
 | `cross-design` | [#12](https://github.com/git-sparrow/skills/issues/12): separate design consultation from repeated code-review repair rounds | [#13](https://github.com/git-sparrow/skills/pull/13): protocol tests, simulation, and a [live native two-model consultation](evals/cross-design/2026-11-16-native/decision.md) |
+| `cross-review` | [#11](https://github.com/git-sparrow/skills/issues/11): replace repeated repair rounds and unreliable reports with bounded evidence-based review | [Design decision](evals/cross-review/design-2026-11-17/decision.md), [live evaluations](evals/cross-review/live-2026-11-17/report.md) |
+
+Review-only is the default. Optional repair gets focused verification; advisory findings do
+not force repeated reviews. Native calls require active coordinator management; automatic
+timeouts, coordinator-loss cleanup and remote-provider shutdown are not guaranteed.
 
 ## Install
 
@@ -37,6 +42,9 @@ marketplace source (Claude Code).
   pair. Codex reads the same files, so there is no second manifest.
 - `skills/<name>/SKILL.md`: one folder per skill, `name` and `description` in the
   frontmatter.
+- `lib/artifacts.mjs`: shared filesystem/hash primitives for cross-design and cross-review.
+  Install the whole plugin; individual skill-directory symlinks into a complete checkout
+  work, but copying a skill folder without `lib/` does not.
 - `skills/<name>/scripts/`: optional helpers and their tests. Run
   `node --test skills/*/scripts/*.test.mjs` (Node 20.11 or later).
 - `skills/<name>/agents/openai.yaml`: optional Codex invocation policy.

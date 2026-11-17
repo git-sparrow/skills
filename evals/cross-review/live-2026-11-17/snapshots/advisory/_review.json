@@ -1,0 +1,35 @@
+{
+  "repo": "/private/tmp/cr11-live/advisory-repo",
+  "base": "176fa8c1cebf93de163f9de8748be3a6e7acacb6",
+  "head": "47a36b0f4a2937ea7b518680aa48cb2e0b9ca052",
+  "baseSelector": "base",
+  "headSelector": "review-head",
+  "diffArgs": [
+    "diff",
+    "--no-ext-diff",
+    "--no-textconv",
+    "--binary",
+    "--no-color",
+    "--no-renames"
+  ],
+  "diffSha256": "bd5495cb1b8fccd6e4c7c54cd4452dcbb1765892002ed293986c02661b01e440",
+  "experts": [
+    {
+      "id": "sol",
+      "model": "gpt-6.1-sol",
+      "provider": "OpenAI",
+      "harness": "native collaboration"
+    },
+    {
+      "id": "astra",
+      "model": "gpt-6-astra",
+      "provider": "OpenAI",
+      "harness": "native collaboration"
+    }
+  ],
+  "mode": "review",
+  "startedAt": 1794902605297,
+  "deadline": 1794904405297,
+  "callMs": 600000,
+  "maxCalls": 6
+}
