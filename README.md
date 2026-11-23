@@ -52,7 +52,12 @@ marketplace source (Claude Code).
   and an explicit `$skill` still runs it. Checked 2026-11-14 with codex-cli 0.167.2, the
   skills loaded through `~/.agents/skills`: Codex listed only `adopt-tech`, and
   `$skills:trim-redundancy` loaded `trim-redundancy` (the bare `$trim-redundancy` did not).
-  A plugin install was not run against this policy.
+  A plugin install honours it too. Checked 2026-11-23 with codex-cli 0.171.0: with the
+  plugin installed from this marketplace (main at `2536af9`) into empty `CODEX_HOME` and
+  `HOME` folders, `codex debug prompt-input` listed `skills:adopt-tech`,
+  `skills:cross-design` and `skills:cross-review` but not `skills:trim-redundancy`.
+  Setting the policy to `true` in the installed copy brought it back. `prompt-input`
+  renders the model-visible prompt without a model call, so it needs no login.
 
 Verified 2026-11-14 with Claude Code 2.1.325 and codex-cli 0.167.2: both installed this
 plugin and its skills in isolated config homes (`CLAUDE_CONFIG_DIR`, `CODEX_HOME`).

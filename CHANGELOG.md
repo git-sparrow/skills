@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- README: a Codex plugin install honours `policy.allow_implicit_invocation: false`, now
+  verified with `codex debug prompt-input` in an isolated `CODEX_HOME`.
+
 - Add `cross-review`: review-only by default, evidence-based adjudication, bounded targeted
   challenge and optional repair with focused verification. Replaces the unmerged #9 design;
   origin/contract: #11. [Design](evals/cross-review/design-2026-11-17/decision.md) and
