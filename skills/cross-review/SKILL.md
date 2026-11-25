@@ -13,7 +13,10 @@ alternatives, not this skill's finding protocol.
 
 ## 1. Scope and pin
 
-Read repository instructions. Write `contract.md` separating this change's obligations,
+Read repository instructions. Identify the originating issue or spec from the caller,
+commit references or repository docs. Capture relevant coding standards, including
+`CODING_STANDARDS.md` and `CONTRIBUTING.md` when present. Record the source of each
+obligation and any evidence gaps. Write `contract.md` separating this change's obligations,
 contextual links and downstream exclusions. Fetch only evidence needed for claims; a
 linked issue does not automatically add obligations. Record provenance and the freshness
 of fetched refs. Capture the repository, base/head selectors and resolved commits, generated
@@ -25,8 +28,9 @@ Review source at the pins, not mutable working files. Keep run artifacts outside
 Prepare shared inputs once; never rewrite them or clean another attempt during a run.
 
 Choose two distinct model bindings using caller/repository preferences; otherwise choose
-two suitable available models. Same-provider models are supported; cross-provider is not
-required. Record configured binding, provider, harness and resolved identity when known.
+two suitable available models. Use `claude-codex` when the caller requests Claude Code
+and Codex, and `native` for managed native collaboration. Record the exact configured
+model, provider, harness and resolved identity when available.
 Never substitute silently. Unavailable required bindings leave the review INCOMPLETE.
 Use fresh contexts and prohibit reading peer attempts. Isolation is prompt-only unless
 the host independently proves stronger restrictions.
@@ -41,7 +45,7 @@ clock. Smaller caller limits win. No broad rediscovery or automatic budget reset
 
 ## 2. Independent discovery
 
-Follow the concrete [native transport procedure](references/transports.md). Reserve attempts
+Follow the concrete [transport procedure](references/transports.md). Reserve attempts
 sequentially, then launch calls concurrently where supported. Recheck deadlines immediately
 before dispatch. Save each handle, original final response and lifecycle observations.
 A launcher acknowledgement or a plausible file is not successful terminal completion.
@@ -101,10 +105,11 @@ incomplete. Preserve diagnostic files rather than repairing the ledger in place.
 
 Report separately: execution/coverage completeness; snapshot currency; confirmed blocking,
 unresolved, advisory, rejected and fixed findings; scoped verification and readiness evidence.
+Report spec and standards coverage separately, with the sources checked and any gaps.
 Include actual calls, retries, elapsed time, bindings, lifecycle limits, misses and unperformed
 work. “No findings” means none established within stated coverage, not exhaustive correctness.
 A completed review can contain blockers. Readiness evidence is not merge authorization.
 
 Keep the report outside tracked source unless the caller requests a repository artifact.
-The workflow requires active coordinator management: it does not guarantee autonomous
-timeouts, cleanup after coordinator loss, OS isolation, descendant exit or remote shutdown.
+The coordinator manages review stages. Report the lifecycle and isolation limits of the
+selected transport, including the scope of any observed local cancellation.

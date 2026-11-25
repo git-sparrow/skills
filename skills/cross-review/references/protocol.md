@@ -4,7 +4,8 @@ Requires Node 20.11+. Run the skill's `scripts/protocol.mjs` from a complete plu
 `lib/artifacts.mjs` is shared with cross-design. Whole-plugin copies and skill symlinks into
 that tree are supported. Copying only an individual skill folder is not supported.
 One honest coordinator writes records sequentially. Hashes detect accidental drift, not a
-malicious writer changing manifests too. This helper does not execute or supervise models.
+malicious writer changing manifests too. This helper records artifacts. The separate [provider runner](transports.md)
+executes and supervises the Claude Code + Codex transport.
 
 ## Capture
 
@@ -20,6 +21,7 @@ that directory:
   "base": "refs/remotes/origin/main",
   "head": "HEAD",
   "mode": "review",
+  "transport": "native",
   "minutes": 30,
   "callMinutes": 10,
   "experts": [
@@ -51,6 +53,10 @@ deadlines. Each retry needs a new attempt; never remove earlier attempts. Partia
 writes invalidate the run rather than being silently repaired.
 
 ## Dispatch and acceptance
+
+For `claude-codex`, use `provider.mjs` as described in the [transport procedure](transports.md).
+It records launch and terminal observations and submits the result for acceptance.
+For native calls, use the manual procedure below.
 
 ```sh
 node <skill>/scripts/protocol.mjs preflight <run> <attempt-id>
