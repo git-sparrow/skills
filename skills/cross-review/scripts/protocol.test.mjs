@@ -239,3 +239,14 @@ test("successful execution and completed review are independent dimensions", (t)
   const report = closeout(run);
   assert.equal(report.runtime, "COMPLETE"); assert.equal(report.review, "INCOMPLETE");
 });
+
+test("Claude/Codex selection requires one exact binding from each provider", (t) => {
+  const { root, options } = fixture(t);
+  const anthropic = { id: "a", provider: "anthropic", harness: "claude-code", model: "claude-model" };
+  const openai = { id: "b", provider: "openai", harness: "codex", model: "openai-model" };
+  const config = { ...options, transport: "claude-codex" };
+  const run = path.join(root, "paired");
+  assert.throws(() => init(run, { ...config, experts: [anthropic, { ...anthropic, id: "b", model: "other" }] }),
+    /one Anthropic and one OpenAI/);
+  assert.deepEqual(init(run, { ...config, experts: [anthropic, openai] }).experts, [anthropic, openai]);
+});

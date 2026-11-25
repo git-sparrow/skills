@@ -13,9 +13,10 @@ Each skill comes from a real incident, and the PR that added it shows the skill 
 | `cross-design` | [#12](https://github.com/git-sparrow/skills/issues/12): separate design consultation from repeated code-review repair rounds | [#13](https://github.com/git-sparrow/skills/pull/13): protocol tests, simulation, and a [live native two-model consultation](evals/cross-design/2026-11-16-native/decision.md) |
 | `cross-review` | [#11](https://github.com/git-sparrow/skills/issues/11): replace repeated repair rounds and unreliable reports with bounded evidence-based review | [Design decision](evals/cross-review/design-2026-11-17/decision.md), [live evaluations](evals/cross-review/live-2026-11-17/report.md) |
 
-Review-only is the default. Optional repair gets focused verification; advisory findings do
-not force repeated reviews. Native calls require active coordinator management; automatic
-timeouts, coordinator-loss cleanup and remote-provider shutdown are not guaranteed.
+Review-only is the default. Optional repair gets focused verification. Cross-review can
+select managed native collaboration or the [Claude Code + Codex CLI runner](skills/cross-review/references/transports.md).
+The CLI runner enforces a local deadline while its supervisor stays alive. Remote shutdown
+is unverified.
 
 ## Install
 

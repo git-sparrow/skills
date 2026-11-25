@@ -30,8 +30,9 @@ function load(run) {
   return state;
 }
 
-function attempts(run) {
-  return readdirSync(path.join(run, "attempts")).sort().map((name) => {
+function attempts(run, attemptId) {
+  return readdirSync(path.join(run, "attempts")).sort()
+    .filter((name) => attemptId === undefined || name === attemptId).map((name) => {
     const dir = path.join(run, "attempts", name);
     const a = { ...json(path.join(dir, "attempt.json")), dir };
     check(!existsSync(path.join(dir, "response.txt")) || existsSync(path.join(dir, "result.json")),
@@ -62,8 +63,17 @@ function results(prior) {
     .map((a) => ({ attempt: a, response: accepted(a) }));
 }
 
+const providerHarnesses = new Map([["anthropic", "claude-code"], ["openai", "codex"]]);
+
+export function checkProviderBinding(binding) {
+  check(providerHarnesses.has(binding.provider) &&
+    providerHarnesses.get(binding.provider) === binding.harness, "Invalid Claude/Codex binding");
+  check(typeof binding.model === "string" && /^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(binding.model),
+    "Set an explicit provider model ID");
+}
+
 export function init(run, config, now = Date.now()) {
-  const { source, experts, mode = "review", minutes = 30, callMinutes = 10 } = config;
+  const { source, experts, mode = "review", minutes = 30, callMinutes = 10, transport = "native" } = config;
   check(["review", "repair"].includes(mode), "Invalid mode");
   check(Array.isArray(experts) && experts.length === 2, "Select two experts");
   for (const e of experts) {
@@ -73,6 +83,11 @@ export function init(run, config, now = Date.now()) {
   check(experts[0].id !== experts[1].id &&
     (experts[0].model !== experts[1].model || experts[0].provider !== experts[1].provider),
   "Select distinct expert/model bindings");
+  check(["native", "claude-codex"].includes(transport), "Invalid transport");
+  if (transport === "claude-codex") {
+    experts.forEach(checkProviderBinding);
+    check(experts[0].provider !== experts[1].provider, "Select one Anthropic and one OpenAI expert");
+  }
   check(Number.isFinite(minutes) && minutes > 0 && minutes <= 30 &&
     Number.isFinite(callMinutes) && callMinutes > 0 && callMinutes <= 10, "Invalid budget");
   const repo = realpathSync(config.repo);
@@ -99,7 +114,7 @@ export function init(run, config, now = Date.now()) {
   const diff = patch(repo, base, head);
   write(path.join(target, "inputs", "_diff.patch"), diff);
   const state = { repo, base, head, baseSelector: config.base, headSelector: config.head,
-    diffArgs, diffSha256: digest(diff), experts, mode, startedAt: now,
+    diffArgs, diffSha256: digest(diff), experts, mode, transport, startedAt: now,
     deadline: now + minutes * 60_000, callMs: callMinutes * 60_000,
     maxCalls: mode === "repair" ? 8 : 6 };
   writeJson(path.join(target, "inputs", "_review.json"), state);
@@ -155,7 +170,9 @@ export function prepare(run, expert, phase = "discovery", packetFile, now = Date
   if (phase !== "verification") check(status(s.repo) === "", "Working tree changed during review");
   const context = `${read(path.join(run, "inputs", `_${phase}.md`))}\n\n` +
     `Snapshot: ${path.resolve(run, "inputs")}\nRepository: ${s.repo}\nBase: ${s.base}\nHead: ${s.head}\n` +
-    `Read every snapshot input. Inspect source only at these pins with git show.\n` +
+    (s.transport === "claude-codex"
+      ? "Read every inline snapshot input. Review only the supplied bytes. Do not use tools or open local paths.\n"
+      : "Read every snapshot input. Inspect source only at these pins with git show.\n") +
     `\nFocused packet:\n${packet}\n\nTracked repair overlay against head:\n${repair}`;
   const requestSha256 = digest(context);
   check(prior.filter((a) => a.phase === phase).every((a) => a.requestSha256 === requestSha256),
@@ -179,7 +196,7 @@ export function prepare(run, expert, phase = "discovery", packetFile, now = Date
 }
 
 export function preflight(run, attemptId, now = Date.now()) {
-  const s = load(run), a = attempts(run).find((x) => x.attemptId === attemptId);
+  const s = load(run), a = attempts(run, attemptId).find((x) => x.attemptId === attemptId);
   check(a, "Unknown attempt");
   integrity(a);
   check(now < a.deadline && now < s.deadline, "Dispatch deadline expired");
@@ -216,7 +233,7 @@ function validateResponse(r, a) {
 }
 
 export function finish(run, attemptId, receipt, rawFile, now = Date.now()) {
-  const s = load(run), a = attempts(run).find((x) => x.attemptId === attemptId);
+  const s = load(run), a = attempts(run, attemptId).find((x) => x.attemptId === attemptId);
   check(a, "Unknown attempt");
   const launch = json(path.join(a.dir, "launch.json"));
   check(receipt.attemptId === attemptId && receipt.handle === launch.handle &&

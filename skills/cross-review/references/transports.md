@@ -1,10 +1,60 @@
-# Supported execution: managed native collaboration
+# Review execution
 
-This version supports the native host exposing `spawn_agent`, final task notifications,
-`list_agents` and `interrupt_agent`. It does not ship an external runner or unspecified
-bridge. A different host needs its own concrete lifecycle evidence before it is advertised.
-If exact model selection or terminal outcomes are unavailable, preserve partial work and
-report INCOMPLETE. Cross-provider operation has not been qualified.
+Select `native` or `claude-codex` when initializing the run. Keep the caller's
+required bindings if one provider is unavailable, and report the run INCOMPLETE.
+
+## Claude Code + Codex
+
+Use installed, authenticated CLIs on macOS or Linux. The command contract was checked
+with `claude --help` (2.1.332) and `codex exec --help` (0.172.0) on 2026-11-25.
+The runner uses the Claude Code JSON result and Codex JSONL terminal turn event.
+The coordinator can invoke the same command from either host wherever both CLIs
+and their provider accounts are available.
+
+Set `"transport": "claude-codex"` in config. Supply one expert with
+`"provider": "anthropic", "harness": "claude-code"` and one with
+`"provider": "openai", "harness": "codex"`. Give each a concrete model ID
+reachable by its account. Use the caller's selection and preserve the exact binding.
+Select this path only when the caller authorizes both providers to receive the snapshot.
+Add relevant pinned source excerpts to the snapshot when the diff lacks context. The
+runner sends both CLIs the saved request and inline snapshot through stdin. Each starts
+in a fresh scratch directory. Follow-up calls include their saved packet and repair overlay.
+
+Reserve attempts sequentially and run this command once per attempt, concurrently if
+possible. The command claims the attempt, checks its deadline at dispatch, runs the
+selected CLI, and calls the existing protocol's `finish`:
+
+```sh
+node <skill>/scripts/provider.mjs <run> <attempt-id>
+```
+
+Use a foreground command or managed process that can keep the supervisor alive. Its
+timer runs independently of conversational polling. At deadline or on SIGINT/SIGTERM,
+it sends TERM to the CLI process group and escalates to KILL. It records whether it
+observed the group exit. A host killing the supervisor outright can leave the group
+running. Treat a claimed attempt with missing terminal evidence as unknown and keep
+the review incomplete. Neither a group exit nor a local signal demonstrates remote
+shutdown or covers a descendant that left the process group. The runner never retries
+automatically. Unknown and other unclassified outcomes cannot unlock retry.
+
+The runner retains separate provider stdout and stderr, extracts final assistant text
+only after a successful CLI exit with a complete terminal envelope, and records provider
+session, local PID, outcome and available usage. Output above 8 MiB combined aborts the
+call and leaves partial diagnostics. The review protocol still validates the exact
+attempt and snapshot in the response. Model IDs are configured identities unless the
+provider reports the resolved ID. Report both when present.
+
+Claude Code starts in safe mode with built-in tools disabled. Codex starts with user
+config and rules ignored, hooks and web search disabled, read-only sandbox and approvals
+disabled. Codex is told to use the inline snapshot only. The sandbox does not confine
+reads to that snapshot, so peer file isolation for Codex is prompt-only. Check the
+effective permissions on the installed versions before relying on stronger isolation.
+Store run directories privately and send only material authorized for both providers.
+
+## Managed native collaboration
+
+Use the host's `spawn_agent`, final notifications, `list_agents` and `interrupt_agent`
+when exact selection, fresh contexts and terminal observation are available.
 
 1. Reserve the attempt, run `preflight`, check the returned absolute deadline, and launch
    a fresh-context native task (`fork_turns: none`) with the selected model and saved
