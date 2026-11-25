@@ -50,3 +50,11 @@ phase for that expert when the launch receipt has no terminal counterpart.
 Local verification: `node --test evals/cross-review/provider/run.test.mjs
 skills/*/scripts/*.test.mjs` passed 72 checks with the three opt-in live
 cases skipped.
+
+The schema-constrained canary rerun found no disclosed peer token, write
+file, or project hook marker for either provider. The first adversarial
+canary call on Claude omitted structured output, so the probe records
+response-format compliance separately from observed side effects.
+Receipt: `node evals/cross-review/provider/canary.mjs` with the same model
+environment variables. Production review still rejects a missing
+structured response.
