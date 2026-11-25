@@ -21,6 +21,12 @@ with provenance: repository and revisions (base and head for a PR), source paths
 external receipts. Distinguish observations from the author's claims. Collect evidence
 needed for the decision, not every linked page.
 
+For replacements, list the existing capabilities to preserve and any proposed removals.
+Cite the caller instruction or source contract supporting each consequential exclusion.
+Keep unsupported exclusions open as design questions. Record consultation model
+availability separately from required product capabilities. A capability can be optional
+to use and still be required to support.
+
 Choose two distinct models using the caller's or repository's preferences. Otherwise use
 two available suitable models; another provider is useful when available, not mandatory.
 Record configured model ID, provider, harness, resolved identity when available and any
@@ -38,6 +44,8 @@ and validate responses with the bundled helper. It requires Node 20.11 or later.
 ## 2. Get independent proposals
 
 Give each expert the same brief and evidence, plus [the proposal brief](proposal.md).
+Ask both experts to challenge consequential exclusions introduced by the coordinator
+against the source requirements.
 Use fresh contexts and do not expose the other proposal or your preferred answer. Native
 agents are appropriate when they can bind the selected models and bound the calls; use
 [transport guidance](references/transports.md) for external processes and limitations.

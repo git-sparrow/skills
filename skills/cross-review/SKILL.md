@@ -105,6 +105,11 @@ Include actual calls, retries, elapsed time, bindings, lifecycle limits, misses 
 work. “No findings” means none established within stated coverage, not exhaustive correctness.
 A completed review can contain blockers. Readiness evidence is not merge authorization.
 
+When evaluating the workflow, distinguish a fixture's intended label from its established
+expected behavior. Count a fixture toward clean-case coverage only when the requirements
+establish that expectation. If later evidence exposes ambiguity, revise any earlier
+coverage claims that relied on the fixture.
+
 Keep the report outside tracked source unless the caller requests a repository artifact.
 The workflow requires active coordinator management: it does not guarantee autonomous
 timeouts, cleanup after coordinator loss, OS isolation, descendant exit or remote shutdown.
