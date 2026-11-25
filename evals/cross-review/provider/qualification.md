@@ -58,3 +58,28 @@ response-format compliance separately from observed side effects.
 Receipt: `node evals/cross-review/provider/canary.mjs` with the same model
 environment variables. Production review still rejects a missing
 structured response.
+
+## Skill-driven coordinator check
+
+Both fresh coordinators followed the skill from PR commit `33d802d` without a
+prepared eval command. They reviewed the same fixture pins, `43effa5` to
+`4a32163`. Each run completed in two discovery calls and confirmed blocker
+`R1` by executing the pinned implementations: `double(2)` returned 4 at base
+and 6 at head. Both closeouts reported runtime COMPLETE, review COMPLETE and
+snapshot current. The transport receipts show Claude resolved to
+`claude-opus-5-5` and Codex used the configured `gpt-6.2-sol` binding without
+a provider-reported resolved ID.
+
+The first Codex coordinator run could not authenticate Claude inside the outer
+sandbox and its nested Codex app server failed to initialize with
+`Operation not permitted`. The rerun succeeded after approval to launch the
+provider runner outside the coordinator's outer sandbox, with the reviewer's
+read-only settings and disabled shell tools still enabled. On this setup, use
+that approval path if the outer sandbox blocks startup. This observation does
+not cover other host configurations.
+
+Receipts: reran `protocol.mjs closeout` with each saved adjudication ledger and
+inspected both runs' accepted results and provider transport receipts. The
+Codex coordinator qualified Claude's assertion about every nonzero input
+because both versions can overflow to Infinity. The independently confirmed
+multiplier regression remains blocking.
