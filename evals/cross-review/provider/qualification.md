@@ -20,3 +20,33 @@ Commands used Claude Code 2.1.332 (`claude --version`) and Codex CLI 0.172.0
   The earlier direct launch passed both cases with the same fixture
   standards and contract. These runs establish that both launch paths can
   reach both providers. Reliable end-to-end discovery remains open.
+
+## Structured-output follow-up
+
+Both provider schemas now constrain the identity fields to the current attempt.
+The first schema run left identity fields as unconstrained strings and the
+protocol rejected a mistyped attempt ID. The per-attempt schema run passed
+clean discovery, defect discovery, and targeted challenge and focused repair
+from both the direct launch and the Claude Code launch through the allowlisted
+command. Each run accepted ten provider calls and closed the repair as
+`COMPLETE` with a current tracked overlay. The challenge tested a supplied
+zero-input counterclaim. It did not establish how often reviewers independently
+disagree or raise advisory findings.
+
+| Launch | Live cases passed | Slowest call | Claude reported cost | Codex output tokens |
+| --- | ---: | ---: | ---: | ---: |
+| Direct | 3/3 | 34.278 s | $0.279282 | 2,100 |
+| Claude Code allowlisted command | 3/3 | 28.379 s | $0.272160 | 1,976 |
+
+Receipts: the live section of `node --test --test-name-pattern '^live '
+evals/cross-review/provider/run.test.mjs`, run once directly and once from
+Claude Code. Codex reported usage rather than cost. Claude Code invoked the
+fixed harness, so this does not measure how a fresh coordinator discovers or
+follows the skill without a prepared command.
+
+Independent spec review found that supervisor loss during challenge could
+leave the expert eligible for verification. The protocol now blocks another
+phase for that expert when the launch receipt has no terminal counterpart.
+Local verification: `node --test evals/cross-review/provider/run.test.mjs
+skills/*/scripts/*.test.mjs` passed 72 checks with the three opt-in live
+cases skipped.

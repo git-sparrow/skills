@@ -145,13 +145,18 @@ export function prepare(run, expert, phase = "discovery", packetFile, now = Date
   const s = load(run), prior = attempts(run);
   check(bindingFor(s, expert), "Unknown expert");
   check(phases.includes(phase), "Unknown phase");
+  check(phase !== "verification" || s.mode === "repair", "Repair mode required");
   check(now < s.deadline && prior.length < s.maxCalls, "Run budget exhausted");
   check(current(run), "Base or head changed; report is stale");
   results(prior);
   const same = prior.filter((a) => a.expert === expert && a.phase === phase);
   check(same.length < 2, "Only one retry allowed");
-  check(!prior.some((a) => a.expert === expert && existsSync(path.join(a.dir, "transport.json")) &&
-    json(path.join(a.dir, "transport.json")).outcome === "unknown"), "Unknown cancellation; no further calls for expert");
+  check(!prior.some((a) => {
+    if (a.expert !== expert) return false;
+    const receipt = path.join(a.dir, "transport.json");
+    if (existsSync(receipt)) return json(receipt).outcome === "unknown";
+    return existsSync(path.join(a.dir, "launch.json"));
+  }), "Unknown cancellation or missing terminal evidence; no further calls for expert");
   if (same.length) {
     const f = path.join(same[0].dir, "failure.json");
     check(existsSync(f) && json(f).transient === true, "No terminal transient failure to retry");
@@ -162,7 +167,6 @@ export function prepare(run, expert, phase = "discovery", packetFile, now = Date
       a.expert === e.id && a.phase === "discovery" && r.completion === "COMPLETE"),
     "Both completed discoveries required");
   }
-  check(phase !== "verification" || s.mode === "repair", "Repair mode required");
   check(phase === "discovery" ? !packetFile : Boolean(packetFile), "Follow-up requires focused packet only");
   const packet = packetFile ? read(packetFile) : "";
   check(!packetFile || nonempty(packet), "Empty focused packet");

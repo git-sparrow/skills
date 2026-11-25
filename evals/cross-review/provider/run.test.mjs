@@ -16,7 +16,7 @@ const codexModel = process.env.CROSS_REVIEW_CODEX_MODEL;
 const live = Boolean(claudeModel && codexModel);
 const json = (dir, name) => JSON.parse(readFileSync(path.join(dir, name), "utf8"));
 
-function fixture(t, { deadline = 10_000, behavior = "success", clean = false, real = false } = {}) {
+function fixture(t, { deadline = 10_000, behavior = "success", clean = false, real = false, mode = "review" } = {}) {
   const root = mkdtempSync(path.join(tmpdir(), "provider-eval-"));
   const repo = path.join(root, "repo");
   const source = path.join(root, "source");
@@ -51,11 +51,11 @@ function fixture(t, { deadline = 10_000, behavior = "success", clean = false, re
     { id: "a", provider: "anthropic", harness: "claude-code", model: real ? claudeModel : "fake-claude" },
     { id: "b", provider: "openai", harness: "codex", model: real ? codexModel : "fake-codex" }
   ];
-  init(run, { repo, source, base: "HEAD~1", head: "HEAD", transport: "claude-codex",
+  init(run, { repo, source, base: "HEAD~1", head: "HEAD", transport: "claude-codex", mode,
     callMinutes: deadline / 60_000, experts });
   for (const name of ["claude", "codex"]) {
     writeFileSync(path.join(bin, name),
-      '#!/bin/sh\nexec "$REVIEW_FAKE_NODE" "$REVIEW_FAKE_SCRIPT" "' + name + '"\n',
+      '#!/bin/sh\nexec "$REVIEW_FAKE_NODE" "$REVIEW_FAKE_SCRIPT" "' + name + '" "$@"\n',
       { mode: 0o700 });
   }
   const env = real ? process.env : { ...process.env, PATH: `${bin}${path.delimiter}${process.env.PATH}`,
@@ -71,7 +71,8 @@ function fixture(t, { deadline = 10_000, behavior = "success", clean = false, re
     });
     return { child, done };
   };
-  return { run, marker, start, reserve: (id) => prepare(run, id) };
+  return { run, marker, start, root, file, repo,
+    reserve: (id, phase, packet) => prepare(run, id, phase, packet) };
 }
 
 test("both provider envelopes are accepted and duplicate dispatch is rejected", { skip: !supported }, async (t) => {
@@ -120,6 +121,15 @@ for (const [behavior, evidence] of [
   });
 }
 
+test("Claude Markdown response cannot substitute for structured output", { skip: !supported }, async (t) => {
+  const { reserve, start } = fixture(t, { behavior: "fenced" });
+  const attempt = reserve("a");
+  const result = await start(attempt).done;
+  assert.equal(result.code, 1);
+  assert.match(json(attempt.dir, "transport.json").evidence, /Missing Claude structured output/);
+  assert.equal(existsSync(path.join(attempt.dir, "result.json")), false);
+});
+
 test("hard supervisor loss preserves the claim and blocks retry", { skip: !supported }, async (t) => {
   const { reserve, marker, run, start } = fixture(t, { behavior: "hard-loss" });
   const attempt = reserve("b");
@@ -135,7 +145,7 @@ test("hard supervisor loss preserves the claim and blocks retry", { skip: !suppo
     assert.equal(existsSync(path.join(attempt.dir, "transport.json")), false);
     assert.equal(closeout(run).runtime, "INCOMPLETE");
     assert.match((await start(attempt).done).stderr, /already launched/);
-    assert.throws(() => reserve("b"), /No terminal transient failure/);
+    assert.throws(() => reserve("b"), /missing terminal evidence/);
   } finally {
     // A dead supervisor cannot reap this fake group. The test owns its cleanup.
     try {
@@ -145,6 +155,14 @@ test("hard supervisor loss preserves the claim and blocks retry", { skip: !suppo
     }
   }
 });
+
+function identifiesMultiplier(finding) {
+  const explanation = `${finding.claim} ${finding.evidence}`;
+  return finding.impact === "behavioral" && finding.location.includes("calc.mjs") &&
+    (/\b(?:multipl\w*|triple\w*|three times)\b/i.test(explanation) ||
+      (/\b(?:double|returns?)\b/i.test(explanation) && /\b6\b/.test(explanation) && /\b4\b/.test(explanation)) ||
+      (/\*\s*3\b/.test(explanation) && /\*\s*2\b/.test(explanation)));
+}
 
 for (const clean of [false, true]) {
   test(`live ${clean ? "clean" : "seeded defect"} discovery`, { skip: !supported || !live }, async (t) => {
@@ -159,8 +177,49 @@ for (const clean of [false, true]) {
       t.diagnostic(JSON.stringify({ expert, findings, costUsd: receipt.costUsd, usage: receipt.usage,
         elapsedMs: receipt.observedAt - receipt.execution.dispatchedAt }));
       if (clean) assert.deepEqual(findings, []);
-      else assert.ok(findings.some((finding) => finding.impact === "behavioral" &&
-        finding.location.includes("calc.mjs")), "Missing behavioral finding on the seeded change");
+      else assert.ok(findings.some(identifiesMultiplier), "Missing behavioral finding on the seeded change");
     }
   });
 }
+
+
+test("live targeted challenge and repair", { skip: !supported || !live }, async (t) => {
+  const { reserve, start, root, file, repo, run } = fixture(t,
+    { real: true, mode: "repair", deadline: 120_000 });
+  async function phase(name, packet) {
+    const attempts = ["a", "b"].map((id) => reserve(id, name, packet));
+    const results = await Promise.all(attempts.map((attempt) => start(attempt).done));
+    return results.flatMap((result, index) => {
+      assert.equal(result.code, 0, result.stderr);
+      const { dir, attemptId, expert } = attempts[index];
+      const { findings, limitations } = json(dir, "result.json");
+      const receipt = json(dir, "transport.json");
+      t.diagnostic(JSON.stringify({ phase: name, expert, findings, limitations,
+        costUsd: receipt.costUsd, usage: receipt.usage,
+        elapsedMs: receipt.observedAt - receipt.execution.dispatchedAt }));
+      if (name === "verification") assert.deepEqual(findings, []);
+      else assert.ok(findings.some(identifiesMultiplier), `Missing defect in ${name}`);
+      return findings.map(({ id }) => `${attemptId}/${id}`);
+    });
+  }
+  const original = await phase("discovery");
+  const challenge = path.join(root, "challenge.md");
+  writeFileSync(challenge, "Challenge the counterclaim that the multiplier change cannot violate the contract " +
+    "because double(0) is still 0. Evaluate double(2) and give the surviving finding if warranted.");
+  const challenged = await phase("challenge", challenge);
+  writeFileSync(file, "export const double = n => n * 2;\n");
+  const check = execFileSync(process.execPath, ["--input-type=module", "-e",
+    "import { double } from './calc.mjs'; console.log(double(2))"], { cwd: repo, encoding: "utf8" });
+  assert.equal(Number(check), 4);
+  const verification = path.join(root, "verification.md");
+  writeFileSync(verification, "Verify the repair against the original multiplier defect. " +
+    "The coordinator executed double(2) against the tracked repair and observed 4.");
+  await phase("verification", verification);
+  const summary = closeout(run, [{
+    id: "multiplier", sources: [...original, ...challenged], confidence: "high", impact: "behavioral",
+    disposition: "fixed", evidence: "double(2) returned 6 at the pinned head and 4 with the overlay.",
+    reason: "Both reviewers verified the tracked repair against the contract."
+  }]);
+  assert.equal(summary.review, "COMPLETE");
+  assert.equal(summary.currency, "current-overlay");
+});

@@ -7,7 +7,11 @@ required bindings if one provider is unavailable, and report the run INCOMPLETE.
 
 Use installed, authenticated CLIs on macOS or Linux. The command contract was checked
 with `claude --help` (2.1.332) and `codex exec --help` (0.172.0) on 2026-11-25.
-The runner uses the Claude Code JSON result and Codex JSONL terminal turn event.
+The runner requests schema-constrained output with Claude Code's `--json-schema`
+and Codex's `--output-schema`. The schemas contain only the current attempt's
+identity values. The runner takes Claude's structured output from the original JSON
+result and Codex's response from the JSONL terminal turn. The protocol still checks
+the exact identity and review semantics.
 The coordinator can invoke the same command from either host wherever both CLIs
 and their provider accounts are available.
 

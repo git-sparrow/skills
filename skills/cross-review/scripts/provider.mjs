@@ -11,29 +11,58 @@ import { digest, files, json, read, write, requireThat as check } from "../../..
 const graceMs = 500;
 const maxOutput = 8 * 1024 * 1024;
 
-export function command(binding) {
+const string = { type: "string" };
+const enumeration = (...values) => ({ type: "string", enum: values });
+const array = (items) => ({ type: "array", items });
+const object = (properties) => ({
+  type: "object", properties, required: Object.keys(properties), additionalProperties: false
+});
+export const responseSchema = (attempt) => object({
+  attemptId: enumeration(attempt.attemptId),
+  snapshotSha256: enumeration(attempt.snapshotSha256),
+  requestSha256: enumeration(attempt.requestSha256),
+  completion: enumeration("COMPLETE", "INCOMPLETE"),
+  analysis: string,
+  coverage: string,
+  limitations: array(string),
+  findings: array(object({
+    id: string, location: string, claim: string, evidence: string,
+    confidence: enumeration("high", "medium", "low"),
+    impact: enumeration("behavioral", "advisory"),
+    disposition: enumeration("proposed", "unresolved", "advisory")
+  }))
+});
+
+export function command(binding, schemaFile, schema) {
   checkProviderBinding(binding);
   const { harness, model } = binding;
   if (harness === "claude-code") {
     return ["claude", "--print", "--model", model, "--safe-mode", "--strict-mcp-config",
       "--tools", "", "--permission-mode", "dontAsk", "--no-session-persistence",
-      "--output-format", "json"];
+      "--output-format", "json", ...(schemaFile ? ["--json-schema", schema] : [])];
   }
   return ["codex", "exec", "--model", model, "--sandbox", "read-only", "--ephemeral",
     "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--json",
     "-c", 'approval_policy="never"', "-c", 'model_provider="openai"',
     "-c", "web_search=\"disabled\"", "--disable", "hooks", "--disable", "shell_tool", "--disable", "unified_exec",
-    "--disable", "multi_agent", "--disable", "multi_agent_v2", "-"];
+    "--disable", "multi_agent", "--disable", "multi_agent_v2",
+    ...(schemaFile ? ["--output-schema", schemaFile] : []), "-"];
 }
 
-export function extract(harness, stdout) {
+export function extract(harness, stdout, structured = false) {
   if (harness === "claude-code") {
     const result = JSON.parse(stdout);
     check(result?.type === "result" && result.subtype === "success" &&
-      result.is_error === false && typeof result.result === "string" &&
+      result.is_error === false &&
       typeof result.session_id === "string" && result.session_id, "Missing successful Claude result");
+    if (structured) {
+      check(result.structured_output && typeof result.structured_output === "object" &&
+        !Array.isArray(result.structured_output), "Missing Claude structured output");
+    } else {
+      check(typeof result.result === "string", "Missing Claude result text");
+    }
     const models = Object.keys(result.modelUsage ?? {});
-    return { text: result.result, session: result.session_id,
+    return { text: structured ? JSON.stringify(result.structured_output) : result.result, session: result.session_id,
       resolvedModel: models.length === 1 ? models[0] : undefined, costUsd: result.total_cost_usd };
   }
   const events = stdout.trim().split("\n").map((line) => JSON.parse(line));
@@ -139,7 +168,6 @@ export async function runProvider(run, attemptId) {
   const state = json(path.join(run, "run.json"));
   check(state.transport === "claude-codex", "Run did not select Claude + Codex");
   const binding = state.experts.find(({ id }) => id === attempt.expert);
-  const argv = command(binding);
   const inputs = path.join(run, "inputs");
   const evidence = files(inputs).filter((file) => !file.startsWith("_") || file === "_diff.patch");
   const request = read(path.join(attempt.dir, "request.md")) +
@@ -147,6 +175,10 @@ export async function runProvider(run, attemptId) {
     JSON.stringify(evidence.map((file) => ({ file, text: read(path.join(inputs, file)) })));
   const cwd = mkdtempSync(path.join(tmpdir(), "cross-review-"));
   try {
+    const schemaFile = path.join(cwd, "response-schema.json");
+    const schema = JSON.stringify(responseSchema(attempt));
+    write(schemaFile, schema);
+    const argv = command(binding, schemaFile, schema);
     const launch = launched(run, attemptId, `local:${process.pid}:${randomUUID()}`);
     let result;
     try {
@@ -163,7 +195,7 @@ export async function runProvider(run, attemptId) {
     let evidence = result.reason ?? result.spawnError ?? `CLI exit ${result.code ?? result.signal}`;
     if (!unknown && !result.reason && !result.spawnError && result.code === 0) {
       try {
-        response = extract(binding.harness, stdout.toString("utf8"));
+        response = extract(binding.harness, stdout.toString("utf8"), true);
         outcome = "succeeded";
         evidence = "Zero exit and matching terminal provider envelope";
       } catch (error) {

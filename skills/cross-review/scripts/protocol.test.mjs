@@ -87,7 +87,7 @@ for (const outcome of ["failed", "cancelled", "unknown"]) {
 test("interrupted retry preserves peer inputs, cannot reuse old output and cannot overlap active attempt", (t) => {
   const { run } = fixture(t); const a = start(run); const b = start(run, "b");
   const before = read(path.join(b.dir, "request.md"));
-  assert.throws(() => prepare(run, "a", "discovery", undefined, 2500), /terminal transient/);
+  assert.throws(() => prepare(run, "a", "discovery", undefined, 2500), /missing terminal evidence/);
   end(run, a, {}, { outcome: "cancelled", transient: true });
   const retry = start(run, "a", "discovery", undefined, 4000);
   assert.notEqual(retry.dir, a.dir); assert.equal(read(path.join(b.dir, "request.md")), before);
@@ -249,4 +249,14 @@ test("Claude/Codex selection requires one exact binding from each provider", (t)
   assert.throws(() => init(run, { ...config, experts: [anthropic, { ...anthropic, id: "b", model: "other" }] }),
     /one Anthropic and one OpenAI/);
   assert.deepEqual(init(run, { ...config, experts: [anthropic, openai] }).experts, [anthropic, openai]);
+});
+
+test("a lost challenge supervisor blocks another phase for that expert", (t) => {
+  const { run, root } = fixture(t, { mode: "repair" });
+  discoveries(run);
+  const packet = path.join(root, "packet.md");
+  put(packet, "Review one focused claim.");
+  start(run, "a", "challenge", packet, 4000);
+  assert.throws(() => prepare(run, "a", "verification", packet, 5000), /missing terminal evidence/);
+  assert.equal(prepare(run, "b", "challenge", packet, 5000).expert, "b");
 });
