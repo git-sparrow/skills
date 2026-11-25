@@ -22,7 +22,8 @@ export function command(binding) {
   return ["codex", "exec", "--model", model, "--sandbox", "read-only", "--ephemeral",
     "--ignore-user-config", "--ignore-rules", "--skip-git-repo-check", "--json",
     "-c", 'approval_policy="never"', "-c", 'model_provider="openai"',
-    "-c", "web_search=\"disabled\"", "--disable", "hooks", "--disable", "multi_agent", "--disable", "multi_agent_v2", "-"];
+    "-c", "web_search=\"disabled\"", "--disable", "hooks", "--disable", "shell_tool", "--disable", "unified_exec",
+    "--disable", "multi_agent", "--disable", "multi_agent_v2", "-"];
 }
 
 export function extract(harness, stdout) {
@@ -175,8 +176,9 @@ export async function runProvider(run, attemptId) {
     return finish(run, attemptId, { ...launch, ...identity, execution, outcome, evidence,
       dispatchSha256: digest(request),
       observedAt: result.observedAt, limits: "Local process group only; remote shutdown unknown. " +
-        "Codex has a read-only sandbox; peer file isolation is prompt-only. " +
-        "Claude built-in tools disabled. Configured model identity unless observed in provider output." }, raw);
+        "Codex shell tools disabled and sandbox read-only; filesystem read confinement unverified. " +
+        "Claude built-in tools disabled. Managed policy can still apply. " +
+        "Configured model identity unless observed in provider output." }, raw);
   } finally {
     rmSync(cwd, { recursive: true, force: true });
   }

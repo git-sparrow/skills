@@ -45,10 +45,12 @@ attempt and snapshot in the response. Model IDs are configured identities unless
 provider reports the resolved ID. Report both when present.
 
 Claude Code starts in safe mode with built-in tools disabled. Codex starts with user
-config and rules ignored, hooks and web search disabled, read-only sandbox and approvals
-disabled. Codex is told to use the inline snapshot only. The sandbox does not confine
-reads to that snapshot, so peer file isolation for Codex is prompt-only. Check the
-effective permissions on the installed versions before relying on stronger isolation.
+config and rules ignored, shell execution and web search disabled, and a read-only
+sandbox with approvals disabled. The runner disables Codex hooks and Claude safe mode
+disables project hooks. Managed policy can still apply. Reviewers use inline evidence.
+The repository's provider canary checks for an exposed peer token and a created file
+or hook marker. These observations are specific to the installed CLIs and configuration.
+Codex's read-only sandbox itself does not confine reads to the inline snapshot.
 Store run directories privately and send only material authorized for both providers.
 
 ## Managed native collaboration

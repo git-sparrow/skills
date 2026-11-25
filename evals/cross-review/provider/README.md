@@ -34,3 +34,9 @@ The pilot covers CLI dispatch and discovery. Issue #15 also calls for running
 from both coordinator hosts, probing effective permissions with canaries, and
 qualifying challenge and repair. Evaluating the effect of skill wording
 requires a separate controlled comparison under issue #3.
+
+With the same two model environment variables, run
+`node evals/cross-review/provider/canary.mjs` to exercise the production CLI
+arguments with synthetic read, write and project-hook canaries. It makes two
+live calls and grades actual token disclosure and marker files. It cannot
+establish general filesystem confinement or managed-hook behavior.
