@@ -15,6 +15,7 @@ PR that added it shows the skill at work.
 | `cross-review` | [#11](https://github.com/git-sparrow/skills/issues/11): replace repeated repair rounds and unreliable reports with bounded evidence-based review | [Design decision](evals/cross-review/design-2026-11-17/decision.md), [live evaluations](evals/cross-review/live-2026-11-17/report.md) |
 | `craft-skill` | [#21](https://github.com/git-sparrow/skills/issues/21) (inspiration): build new skills from incidents or other authors' skills, with pinned credits an upstream review can diff | [#22](https://github.com/git-sparrow/skills/pull/22), [hand-run eval](evals/craft-skill/hand-run-2026-11-26/report.md): built `bratan` |
 | `bratan` | [#23](https://github.com/git-sparrow/skills/issues/23) (inspiration): restate an answer that did not land, for a reader who is not a native English speaker | PR pending; [hand-run eval](evals/bratan/hand-run-2026-11-26/report.md) |
+| `bratan` | [#23](https://github.com/git-sparrow/skills/issues/23) (inspiration): restate an answer that did not land, for a reader who is not a native English speaker | [#24](https://github.com/git-sparrow/skills/pull/24), [hand-run eval](evals/bratan/hand-run-2026-11-26/report.md) |
 
 Review-only is the default. Optional repair gets focused verification. Cross-review can
 select managed native collaboration or the [Claude Code + Codex CLI runner](skills/cross-review/references/transports.md).
