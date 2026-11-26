@@ -4,22 +4,17 @@ Personal agent skills for **Claude Code** and **Codex**, from one layout.
 
 ## Skills
 
-Each skill names its origin: an incident, or an inspiration and the job it does here. The
-PR that added it shows the skill at work.
+In Claude Code type `/skills:<name>`; in Codex, `$skills:<name>`. Skills marked *auto* also
+start on their own when the task fits.
 
-| Skill | Why it exists | Evidence |
-| --- | --- | --- |
-| `adopt-tech` | [git-sparrow/kavtsya#303](https://github.com/git-sparrow/kavtsya/issues/303): a scaffold written for the previous major after the version check had passed | [#2](https://github.com/git-sparrow/skills/pull/2), and the hand-run eval recorded in [#3](https://github.com/git-sparrow/skills/issues/3) |
-| `trim-redundancy` | [git-sparrow/kavtsya#305](https://github.com/git-sparrow/kavtsya/pull/305): a redundant incident recap in the docs | [#4](https://github.com/git-sparrow/skills/pull/4) |
-| `cross-design` | [#12](https://github.com/git-sparrow/skills/issues/12): separate design consultation from repeated code-review repair rounds | [#13](https://github.com/git-sparrow/skills/pull/13): protocol tests, simulation, and a [live native two-model consultation](evals/cross-design/2026-11-16-native/decision.md) |
-| `cross-review` | [#11](https://github.com/git-sparrow/skills/issues/11): replace repeated repair rounds and unreliable reports with bounded evidence-based review | [Design decision](evals/cross-review/design-2026-11-17/decision.md), [live evaluations](evals/cross-review/live-2026-11-17/report.md) |
-| `craft-skill` | [#21](https://github.com/git-sparrow/skills/issues/21) (inspiration): build new skills from incidents or other authors' skills, with pinned credits an upstream review can diff | [#22](https://github.com/git-sparrow/skills/pull/22), [hand-run eval](evals/craft-skill/hand-run-2026-11-26/report.md): built `bratan` |
-| `bratan` | [#23](https://github.com/git-sparrow/skills/issues/23) (inspiration): restate an answer that did not land, for a reader who is not a native English speaker | [#24](https://github.com/git-sparrow/skills/pull/24), [hand-run eval](evals/bratan/hand-run-2026-11-26/report.md) |
-
-Review-only is the default. Optional repair gets focused verification. Cross-review can
-select managed native collaboration or the [Claude Code + Codex CLI runner](skills/cross-review/references/transports.md).
-The CLI runner enforces a local deadline while its supervisor stays alive. Remote shutdown
-is unverified.
+| Skill | How to use |
+| --- | --- |
+| `adopt-tech` | *auto*. Before adding or upgrading a dependency, scaffolding a project, or writing config for a tool new to the repo. Every version and path it writes carries a receipt. |
+| `trim-redundancy` | Point it at comments or docs. It cuts repeated information and keeps the reasons and contracts. |
+| `cross-design` | *auto*. Ask two independent models for design alternatives; it challenges a proposal and records the decision with its trade-offs. |
+| `cross-review` | *auto*. Run on a committed change or PR: Claude Code and Codex review it separately, and you get evidence-checked findings. Review-only unless you allow repairs. |
+| `craft-skill` | Give it links to skills you like, or a problem that keeps repeating. It interviews you, credits the sources, tests the new skill and opens a PR. |
+| `bratan` | When the last answer did not land. It says it again in plain English, point first. |
 
 ## Install
 
@@ -72,6 +67,7 @@ plugin and its skills in isolated config homes (`CLAUDE_CONFIG_DIR`, `CODEX_HOME
 
 - Changes land through pull requests; every change says why, with a link to the session
   or issue that taught the lesson.
-- A PR that adds a skill adds its row to [Skills](#skills).
+- A PR that adds a skill links its origin (an incident, or an inspiration and the job it
+  does here), shows the skill at work, and adds its row to [Skills](#skills).
 - Releases are tagged and recorded in `CHANGELOG.md`.
 - Public repo: nothing company-specific, personal or confidential goes in here.

@@ -1,7 +1,7 @@
 {
   "name": "skills",
-  "version": "0.1.0",
-  "description": "Personal agent skills: adopting technology from fresh facts, trimming redundant prose, consulting independent models on design decisions, and bounded code review.",
+  "version": "0.2.0",
+  "description": "Personal agent skills: adopting technology from fresh facts, trimming redundant prose, consulting independent models on design decisions, bounded code review, crafting new skills, and plain restatements.",
   "author": {
     "name": "git-sparrow",
     "url": "https://github.com/git-sparrow"
