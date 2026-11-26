@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Add `craft-skill`: build a skill from an incident or an inspiration, credit each Source
+  with flat, commit-pinned metadata, prove it on a hand-run task and deliver it by PR.
+  The README rule now accepts an inspiration as a skill's origin; `GLOSSARY.md` defines
+  Origin, Source, Credit and Relation; `trim-redundancy` credits move to numbered groups.
+
 - README: a Codex plugin install honours `policy.allow_implicit_invocation: false`, now
   verified with `codex debug prompt-input` in an isolated `CODEX_HOME`.
 

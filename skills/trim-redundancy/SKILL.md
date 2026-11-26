@@ -3,11 +3,16 @@ name: trim-redundancy
 description: Trim repeated information from comments and documentation while keeping the reasons and contracts readers need.
 disable-model-invocation: true
 metadata:
-  credits-author: Lauren Tan
-  credits-project: pstack
-  credits-relation: Inspired by no-comments and Comment Sicko
-  credits-no-comments: https://github.com/cursor/plugins/blob/e8d856f0273b42ebafe0ec3546bd645709e7c1b0/pstack/skills/no-comments/SKILL.md
-  credits-reviewer: https://github.com/cursor/plugins/blob/99559f2f52047978602ef365589275831e76af07/pstack/agents/comment-sicko.md
+  credits-1-author: Lauren Tan
+  credits-1-project: pstack
+  credits-1-relation: inspired-by
+  credits-1-license: MIT
+  credits-1-source: https://github.com/cursor/plugins/blob/e8d856f0273b42ebafe0ec3546bd645709e7c1b0/pstack/skills/no-comments/SKILL.md
+  credits-2-author: Lauren Tan
+  credits-2-project: pstack
+  credits-2-relation: inspired-by
+  credits-2-license: MIT
+  credits-2-source: https://github.com/cursor/plugins/blob/99559f2f52047978602ef365589275831e76af07/pstack/agents/comment-sicko.md
 ---
 
 # Trim redundancy
