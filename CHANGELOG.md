@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.1 (2026-11-26)
 
 - CI: `node --test` runs on each pull request: the skill script tests, the cross-review
   provider eval with CLI stand-ins, and new repo checks in `scripts/check-skills.test.mjs`
