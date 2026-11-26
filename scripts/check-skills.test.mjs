@@ -54,6 +54,7 @@ test("metadata values must be strings", () => {
   failsWith({ meta: "  pinned: true" }, /metadata\.pinned is not a string/);
   failsWith({ meta: "  legacy: yes" }, /metadata\.legacy is not a string/);
   failsWith({ meta: "  empty:" }, /metadata\.empty is not a string/);
+  failsWith({ meta: "  read: 2026-11-26" }, /metadata\.read is not a string/);
 });
 
 test("credits groups are complete, contiguous and well-formed", () => {
@@ -62,6 +63,7 @@ test("credits groups are complete, contiguous and well-formed", () => {
   failsWith({ credits: [credit(1, { relation: "copied" })] }, /relation is "copied"/);
   failsWith({ credits: [credit(1, { source: "https://github.com/o/r/blob/main/SKILL.md" })] }, /not a blob\/<40-hex commit>/);
   failsWith({ credits: [credit(1, { source: `https://github.com/o/r/tree/${sha}/x` })] }, /not a blob\/<40-hex commit>/);
+  failsWith({ credits: [credit(1, { source: "https://GitHub.com/o/r/blob/main/SKILL.md" })] }, /not a blob\/<40-hex commit>/);
   failsWith({ credits: [credit(1, { license: "none", relation: "adapted" })], hasNotices: true }, /license none/);
   failsWith({ credits: [credit(1, { relation: "adapted" })] }, /THIRD-PARTY-NOTICES\.md/);
   failsWith({ meta: "  credits-1-url: x" }, /credits-1-url is not a credits-N/);
@@ -88,6 +90,7 @@ test("README rows: one per skill, auto mark matches, no strays", () => {
   assert.match(check(["| `a` | x |", "| `b` | y |"]), /a is model-invocable/);
   assert.match(check(["| `a` | *auto*. x |", "| `b` | *auto*. y |"]), /b is explicit-only/);
   assert.match(check(["| `a` | *auto*. x |", "| `b` | y |", "| `c` | z |"]), /row for c/);
+  assert.match(check(["| `a` | *auto*. x |", "`a` | *auto*. again", "| `b` | y |"]), /2 Skills rows for a/);
 });
 
 test("the YAML reader rejects what it cannot read", () => {
@@ -95,5 +98,8 @@ test("the YAML reader rejects what it cannot read", () => {
   assert.throws(() => parseSimpleYaml("a:\n    b: c\n"), /unsupported indentation/);
   assert.throws(() => parseSimpleYaml("a: [1, 2]\n"), /unsupported scalar/);
   assert.throws(() => parseSimpleYaml("a: x # note\n"), /unsupported scalar/);
+  assert.throws(() => parseSimpleYaml("a: b: c\n"), /unsupported scalar/);
+  assert.throws(() => parseSimpleYaml("a: x\na: y\n"), /duplicate key a/);
+  assert.throws(() => parseSimpleYaml("m:\n  k: x\n  k: y\n"), /duplicate key k/);
   assert.deepEqual(parseSimpleYaml("a: \"q: r\"\n").a.value, "q: r");
 });

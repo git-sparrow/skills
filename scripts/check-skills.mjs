@@ -1,6 +1,6 @@
 // Repo-wide checks on each skill's frontmatter, credits, Codex policy and README row.
 // The format they enforce: skills/craft-skill/references/credits.md and README.md.
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 // Reads the YAML subset these files use: `key: scalar` lines, and a key with no value
@@ -14,6 +14,8 @@ export function parseSimpleYaml(text) {
     const m = /^( *)([A-Za-z0-9_.-]+):(?: (.*))?$/.exec(raw);
     if (!m) throw new Error(`line ${i + 1}: unsupported YAML: ${raw}`);
     const [, indent, key, value = ""] = m;
+    const target = indent === "" ? root : nested;
+    if (target && Object.hasOwn(target, key)) throw new Error(`line ${i + 1}: duplicate key ${key}`);
     if (indent === "") {
       if (value.trim() === "") {
         nested = root[key] = {};
@@ -30,9 +32,10 @@ export function parseSimpleYaml(text) {
   return root;
 }
 
-// YAML 1.1 parsers still read yes/no/on/off as booleans, so those count as non-strings too.
+// YAML 1.1 parsers still read yes/no/on/off as booleans and ISO dates as timestamps, so
+// those count as non-strings too.
 const NON_STRING =
-  /^(~|null|Null|NULL|true|True|TRUE|false|False|FALSE|yes|Yes|YES|no|No|NO|on|On|ON|off|Off|OFF|[-+]?[0-9]+|0o[0-7]+|0x[0-9a-fA-F]+|[-+]?(\.[0-9]+|[0-9]+(\.[0-9]*)?)([eE][-+]?[0-9]+)?|[-+]?\.(inf|Inf|INF)|\.(nan|NaN|NAN))$/;
+  /^(~|null|Null|NULL|true|True|TRUE|false|False|FALSE|yes|Yes|YES|no|No|NO|on|On|ON|off|Off|OFF|[-+]?[0-9]+|0o[0-7]+|0x[0-9a-fA-F]+|[-+]?(\.[0-9]+|[0-9]+(\.[0-9]*)?)([eE][-+]?[0-9]+)?|[-+]?\.(inf|Inf|INF)|\.(nan|NaN|NAN)|[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}([Tt ].*)?)$/;
 
 class Scalar {
   constructor(value, string) {
@@ -45,7 +48,7 @@ function scalar(raw, i) {
   const v = raw.trim();
   if (/^"([^"\\]|\\.)*"$/.test(v)) return new Scalar(JSON.parse(v), true);
   if (/^'([^']|'')*'$/.test(v)) return new Scalar(v.slice(1, -1).replaceAll("''", "'"), true);
-  if (/^[[{|>&*!"'%@`]/.test(v) || v.includes(" #")) {
+  if (/^[[{|>&*!"'%@`]/.test(v) || v.includes(" #") || v.includes(": ") || v.endsWith(":")) {
     throw new Error(`line ${i + 1}: unsupported scalar: ${v}`);
   }
   if (v === "") return new Scalar(null, false);
@@ -60,6 +63,15 @@ export function frontmatter(skillMd) {
   const m = /^---\n([\s\S]*?)\n---\n/.exec(skillMd);
   if (!m) throw new Error("SKILL.md does not start with a --- frontmatter block");
   return parseSimpleYaml(m[1]);
+}
+
+// Hostnames are case-insensitive; URL lowercases them.
+function isGitHub(source) {
+  try {
+    return ["github.com", "www.github.com"].includes(new URL(source).hostname);
+  } catch {
+    return false;
+  }
 }
 
 const CREDIT_FIELDS = ["author", "project", "relation", "license", "source"];
@@ -94,9 +106,9 @@ export function checkSkill({ name, fm, openai, hasNotices }) {
     groups.get(n)[m[2]] = v.value;
   }
   const numbers = [...groups.keys()].sort((a, b) => a - b);
-  numbers.forEach((n, i) => {
-    if (n !== i + 1) fail(`credits groups must be numbered 1..${numbers.length} without gaps; found ${numbers.join(", ")}`);
-  });
+  if (numbers.some((n, i) => n !== i + 1)) {
+    fail(`credits groups must be numbered 1..${numbers.length} without gaps; found ${numbers.join(", ")}`);
+  }
   let adapted = false;
   for (const n of numbers) {
     const g = groups.get(n);
@@ -105,7 +117,7 @@ export function checkSkill({ name, fm, openai, hasNotices }) {
     if (g.relation && !["adapted", "inspired-by"].includes(g.relation)) {
       fail(`${at}-relation is ${JSON.stringify(g.relation)}; use adapted or inspired-by`);
     }
-    if (g.source && /^https?:\/\/(www\.)?github\.com\//.test(g.source) &&
+    if (g.source && isGitHub(g.source) &&
         !/^https:\/\/github\.com\/[^/]+\/[^/]+\/blob\/[0-9a-f]{40}\/./.test(g.source)) {
       fail(`${at}-source is a GitHub URL but not a blob/<40-hex commit>/ link: ${g.source}`);
     }
@@ -130,13 +142,14 @@ export function checkSkill({ name, fm, openai, hasNotices }) {
   return errors;
 }
 
-// Rows of the table under `## Skills`: `| \`name\` | how to use |`.
+// Rows of the table under `## Skills`: `| \`name\` | how to use |`. GFM lets a row drop its
+// outer pipes, so those count too.
 export function readmeRows(readme) {
   const section = /^## Skills\n([\s\S]*?)(?=^## )/m.exec(readme);
   if (!section) throw new Error("README has no ## Skills section");
   const rows = [];
   for (const line of section[1].split("\n")) {
-    const m = /^\| `([^`]+)` \|(.*)\|\s*$/.exec(line);
+    const m = /^\|?\s*`([^`]+)`\s*\|(.*)$/.exec(line);
     if (m) rows.push({ name: m[1], auto: m[2].trim().startsWith("*auto*") });
   }
   return rows;
@@ -161,6 +174,8 @@ export function checkReadme(rows, skills) {
   return errors;
 }
 
+const isFile = (path) => existsSync(path) && statSync(path).isFile();
+
 export function loadRepo(root) {
   const dir = join(root, "skills");
   return readdirSync(dir, { withFileTypes: true })
@@ -172,7 +187,7 @@ export function loadRepo(root) {
         name,
         fm: frontmatter(readFileSync(join(base, "SKILL.md"), "utf8")),
         openai: existsSync(openaiPath) ? parseSimpleYaml(readFileSync(openaiPath, "utf8")) : null,
-        hasNotices: existsSync(join(base, "THIRD-PARTY-NOTICES.md")),
+        hasNotices: isFile(join(base, "THIRD-PARTY-NOTICES.md")),
       };
     });
 }
