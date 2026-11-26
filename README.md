@@ -13,7 +13,7 @@ PR that added it shows the skill at work.
 | `trim-redundancy` | [git-sparrow/kavtsya#305](https://github.com/git-sparrow/kavtsya/pull/305): a redundant incident recap in the docs | [#4](https://github.com/git-sparrow/skills/pull/4) |
 | `cross-design` | [#12](https://github.com/git-sparrow/skills/issues/12): separate design consultation from repeated code-review repair rounds | [#13](https://github.com/git-sparrow/skills/pull/13): protocol tests, simulation, and a [live native two-model consultation](evals/cross-design/2026-11-16-native/decision.md) |
 | `cross-review` | [#11](https://github.com/git-sparrow/skills/issues/11): replace repeated repair rounds and unreliable reports with bounded evidence-based review | [Design decision](evals/cross-review/design-2026-11-17/decision.md), [live evaluations](evals/cross-review/live-2026-11-17/report.md) |
-| `craft-skill` | This session's brainstorm (inspiration): build new skills from incidents or other authors' skills, with pinned credits an upstream review can diff | PR pending; hand-run eval pending |
+| `craft-skill` | [#21](https://github.com/git-sparrow/skills/issues/21) (inspiration): build new skills from incidents or other authors' skills, with pinned credits an upstream review can diff | PR pending; hand-run eval pending |
 
 Review-only is the default. Optional repair gets focused verification. Cross-review can
 select managed native collaboration or the [Claude Code + Codex CLI runner](skills/cross-review/references/transports.md).
