@@ -15,8 +15,9 @@ alternatives, not this skill's finding protocol.
 
 Read repository instructions. Identify the originating issue or spec from the caller,
 commit references or repository docs. Capture relevant coding standards, including
-`CODING_STANDARDS.md` and `CONTRIBUTING.md` when present. Record the source of each
-obligation and any evidence gaps. Write `contract.md` separating this change's obligations,
+`CODING_STANDARDS.md` and `CONTRIBUTING.md` when present, and name in `contract.md` each
+one you looked for and did not find. Record the source of each obligation and any
+evidence gaps. Write `contract.md` separating this change's obligations,
 contextual links and downstream exclusions. Fetch only evidence needed for claims; a
 linked issue does not automatically add obligations. Record provenance and the freshness
 of fetched refs. Capture the repository, base/head selectors and resolved commits, generated
@@ -24,7 +25,8 @@ diff, evidence and prompt identity using [the protocol](references/protocol.md).
 
 Reviewers see only the snapshot. Copy into the source directory, as text at the head pin,
 every file the contract cites and every caller or reader of a changed contract that the
-diff does not show whole. Step 1 is done when a reviewer could check each obligation
+diff does not show whole. For a workflow, config or build change, the files it runs or
+loads are readers. Step 1 is done when a reviewer could check each obligation
 without opening the repository.
 
 Initial reviews require a clean repository and committed pins. The helper generates a

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- `cross-review`: Step 1 counts the files a workflow, config or build change runs as
+  readers, and `contract.md` names each standards file looked for and not found (#35).
+
 - `cross-review`: the transport guide explains the two startup failures seen from a
   sandboxed Codex coordinator and how to launch without loosening reviewer isolation.
   The provider eval README gives a manual coordinator qualification: a fixture with fixed
