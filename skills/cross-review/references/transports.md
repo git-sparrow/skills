@@ -65,7 +65,7 @@ A coordinator that runs inside its own sandbox can stop a reviewer CLI before it
 reviews anything. Read the attempt's receipt (`transport.json`: outcome and evidence)
 and its `provider.stderr`, which holds whatever the CLI printed and may be empty. Two
 failures were seen from a Codex coordinator with Claude Code 2.1.332 and codex-cli
-0.172.0 ([qualification](../../../evals/cross-review/provider/qualification.md#skill-driven-coordinator-check)):
+0.172.0 ([qualification](../../../evals/cross-review/provider/qualification.md#skill-driven-coordinator-check-first-run-2026-11-25)):
 
 - **Claude is not authenticated.** Claude Code could not authenticate from inside
   the outer sandbox. Run `claude auth status` and `codex login status` through the
