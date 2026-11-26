@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.2 (2026-11-26)
 
 - `cross-review`: Step 1 counts the files a workflow, config or build change runs as
   readers, and `contract.md` names each standards file looked for and not found (#35).
