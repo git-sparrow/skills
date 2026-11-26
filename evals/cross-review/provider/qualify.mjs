@@ -5,7 +5,7 @@
 // Passes when the run reviewed the fixture pins, both discoveries ran on the exact
 // bindings, and every accepted result answers the run's one snapshot. Whether the
 // coordinator confirmed the defect is a reading of its report, not checked here.
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, realpathSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -26,27 +26,26 @@ export function qualify(run, claudeModel, codexModel, pins = PINS) {
     { provider: "anthropic", harness: "claude-code", model: claudeModel },
     { provider: "openai", harness: "codex", model: codexModel },
   ];
-  const attempts = readdirSync(path.join(run, "attempts"));
+  // Accepted attempts are those with result.json; attempt.json records their phase.
+  const accepted = readdirSync(path.join(run, "attempts"))
+    .filter((id) => existsSync(path.join(run, "attempts", id, "result.json")))
+    .map((id) => ({ id, attempt: read("attempts", id, "attempt.json"), transport: read("attempts", id, "transport.json"),
+      result: read("attempts", id, "result.json") }));
+  for (const { id, transport, result } of accepted) {
+    if (transport.outcome !== "succeeded") errors.push(`${id}: transport outcome ${transport.outcome}`);
+    if (result.snapshotSha256 !== meta.snapshotSha256) errors.push(`${id}: answered another snapshot`);
+  }
   for (const binding of want) {
-    const label = `${binding.harness} ${binding.model}`;
-    const accepted = attempts.filter((id) => {
-      if (!id.includes("-discovery-") || !existsSync(path.join(run, "attempts", id, "result.json"))) return false;
-      const b = read("attempts", id, "transport.json").binding;
-      return b.provider === binding.provider && b.harness === binding.harness && b.model === binding.model;
-    });
-    if (accepted.length !== 1) errors.push(`${accepted.length} accepted discoveries on ${label}; want 1`);
-    for (const id of accepted) {
-      const transport = read("attempts", id, "transport.json");
-      if (transport.outcome !== "succeeded") errors.push(`${id}: transport outcome ${transport.outcome}`);
-      const result = read("attempts", id, "result.json");
-      if (result.snapshotSha256 !== meta.snapshotSha256) errors.push(`${id}: answered another snapshot`);
-      if (result.completion !== "COMPLETE") errors.push(`${id}: response ${result.completion}`);
-    }
+    const mine = accepted.filter(({ attempt, transport: { binding: b } }) => attempt.phase === "discovery" &&
+      b.provider === binding.provider && b.harness === binding.harness && b.model === binding.model);
+    if (mine.length !== 1) errors.push(`${mine.length} accepted discoveries on ${binding.harness} ${binding.model}; want 1`);
+    for (const { id, result } of mine) if (result.completion !== "COMPLETE") errors.push(`${id}: response ${result.completion}`);
   }
   return errors;
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) {
+// realpath: a checkout reached through a symlink still runs as the main script.
+if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
   const [run, claudeModel, codexModel] = process.argv.slice(2);
   if (!codexModel) {
     console.error("usage: node qualify.mjs <run> <claude-model> <codex-model>");

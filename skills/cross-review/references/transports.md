@@ -62,9 +62,9 @@ Store run directories privately and send only material authorized for both provi
 ### When a CLI fails to start
 
 A coordinator that runs inside its own sandbox can stop a reviewer CLI before it
-reviews anything. The attempt then ends `failed`, its receipt gives the CLI exit,
-and the attempt's `provider.stderr` holds the CLI's own message. Two failures were
-seen from a Codex coordinator on macOS with Claude Code 2.1.332 and codex-cli
+reviews anything. Read the attempt's receipt (`transport.json`: outcome and evidence)
+and its `provider.stderr`, which holds whatever the CLI printed and may be empty. Two
+failures were seen from a Codex coordinator with Claude Code 2.1.332 and codex-cli
 0.172.0 ([qualification](../../../evals/cross-review/provider/qualification.md#skill-driven-coordinator-check)):
 
 - **Claude is not authenticated.** Claude Code could not authenticate from inside

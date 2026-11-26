@@ -28,6 +28,17 @@ test("fixture commits are the same on every machine", (t) => {
     assert.deepEqual({ ...makeFixtureRepo(repo, { clean }), file: undefined },
       { file: undefined, base: PINS.base, head });
   }
+  // Inherited Git settings must not change the commits.
+  const repo = path.join(root, "env");
+  mkdirSync(repo);
+  const saved = process.env.GIT_DEFAULT_HASH;
+  process.env.GIT_DEFAULT_HASH = "sha256";
+  try {
+    assert.equal(makeFixtureRepo(repo).head, PINS.head);
+  } finally {
+    if (saved === undefined) delete process.env.GIT_DEFAULT_HASH;
+    else process.env.GIT_DEFAULT_HASH = saved;
+  }
 });
 
 function fixture(t, { deadline = 10_000, behavior = "success", clean = false, real = false, mode = "review" } = {}) {

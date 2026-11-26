@@ -49,8 +49,11 @@ coordinator on each host to follow the skill by itself. Repeat it after a change
 `skills/cross-review/references/transports.md`. The last run is recorded in
 [qualification.md](qualification.md#skill-driven-coordinator-check).
 
-**Set up.** `CHECKOUT` is the root of a clean clone of this repository at the commit
-under test; record `git -C "$CHECKOUT" rev-parse HEAD`. The skill is
+**Set up.** Set four shell variables. `CHECKOUT` is the absolute path of the root of
+a clean clone of this repository at the commit under test; record
+`git -C "$CHECKOUT" rev-parse HEAD`. `WORK` is an absolute path to a new, empty
+folder outside that clone. `CLAUDE_MODEL` and `CODEX_MODEL` are the exact model IDs
+on the installed, authenticated CLIs. The skill is
 `$CHECKOUT/skills/cross-review/SKILL.md`, read from the checkout rather than an
 installed plugin, so the run tests the change. Build one fixture per host:
 
@@ -80,6 +83,8 @@ directory at <WORK>/run-<HOST>. Finish with the closeout output and your report.
 
 If a reviewer CLI fails to start, see
 [When a CLI fails to start](../../../skills/cross-review/references/transports.md#when-a-cli-fails-to-start).
+Once the launch works, the coordinator starts a new run in a new directory (for
+example `run-<HOST>-2`); check that run, not the failed one.
 
 **Close out.** For each host:
 
@@ -88,7 +93,8 @@ node "$CHECKOUT/evals/cross-review/provider/qualify.mjs" "$WORK/run-<HOST>" "$CL
 ```
 
 It passes when the run reviewed the fixture commits, one accepted COMPLETE discovery
-ran on each exact binding, and every accepted result answers the run's one snapshot.
+ran on each exact binding, and every accepted result, follow-ups included, answers
+the run's one snapshot.
 Then read the coordinator's closeout and report. The qualification passes when the
 closeout says runtime COMPLETE, review COMPLETE and currency current, and the report
 confirms the multiplier defect in `calc.mjs` as blocking from evidence the coordinator
