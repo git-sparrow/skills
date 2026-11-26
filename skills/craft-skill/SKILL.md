@@ -83,11 +83,12 @@ skipped item is absent.
 
 Run the skill by hand on one realistic task: the incident replayed, or for an
 inspiration, a task from the job the user named. Run it in a fresh subagent that gets only
-the skill and the task, so the session's context cannot fill the gaps. Record the task, what the skill did and
-the verdict in `evals/<name>/hand-run-<YYYY-MM-DD>/report.md`. Fix the draft and rerun
-until the verdict holds.
+the skill and the task, so the session's context cannot fill the gaps. In
+`evals/<name>/hand-run-<YYYY-MM-DD>/`, save the subagent's prompt as `prompt.md` and its
+full output verbatim as `output.md`, then write `report.md`: the task, what the skill did,
+each check, and the verdict. Fix the draft and rerun until the verdict holds.
 
-Done when the report shows the skill doing the job on that task.
+Done when `output.md` shows the skill doing the job on that task and `report.md` says so.
 
 ## 5. Deliver
 
@@ -100,5 +101,9 @@ Show the user each outward text and wait for approval before sending it.
    under Unreleased.
 3. Open the PR. Its body carries a **Sources** section, one line per Source: what we took,
    what we skipped and why. The later upstream review reads it to judge new upstream work.
+4. Ship. In this repo, Claude Code loads the merged skill only after a release bumps
+   `version` in `.claude-plugin/plugin.json`; Codex picks it up without one. After the
+   merge, offer to cut that release.
 
-Done when the PR is open and links the Origin and the hand-run report.
+Done when the PR is open and links the Origin and the hand-run report, and the user knows
+whether a release is needed to ship it.
