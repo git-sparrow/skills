@@ -46,8 +46,13 @@ marketplace source (Claude Code).
 - `lib/artifacts.mjs`: shared filesystem/hash primitives for cross-design and cross-review.
   Install the whole plugin; individual skill-directory symlinks into a complete checkout
   work, but copying a skill folder without `lib/` does not.
-- `skills/<name>/scripts/`: optional helpers and their tests. Run
-  `node --test skills/*/scripts/*.test.mjs` (Node 20.11 or later).
+- `skills/<name>/scripts/`: optional helpers and their tests.
+- `scripts/check-skills.test.mjs`: checks each skill's frontmatter and credits against the
+  credits format, that `disable-model-invocation: true` matches
+  `allow_implicit_invocation: false` in `agents/openai.yaml`, and that each skill has one
+  [Skills](#skills) row, marked *auto* exactly when the model may start it.
+- Run every test with `node --test` (Node 20.11 or later) from the repository root. CI runs
+  it on each pull request; it needs no credentials and makes no model calls.
 - `skills/<name>/agents/openai.yaml`: optional Codex invocation policy.
   `policy.allow_implicit_invocation: false` keeps the skill out of the model's skill list,
   and an explicit `$skill` still runs it. Checked 2026-11-14 with codex-cli 0.167.2, the

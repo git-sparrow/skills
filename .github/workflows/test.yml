@@ -1,0 +1,26 @@
+name: test
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  node-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # 20.11 is the floor README.md states; 24 is the current LTS.
+        node: ["20.11", "24"]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+      # Runs every *.test.mjs: the skill script tests, scripts/check-skills.test.mjs and the
+      # cross-review provider eval with its CLI stand-ins. Live provider tests skip without
+      # CROSS_REVIEW_CLAUDE_MODEL and CROSS_REVIEW_CODEX_MODEL, which CI never sets.
+      - run: node --test
