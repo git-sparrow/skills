@@ -7,6 +7,9 @@
   The README rule now accepts an inspiration as a skill's origin; `GLOSSARY.md` defines
   Origin, Source, Credit and Relation; `trim-redundancy` credits move to numbered groups.
 
+- Add `bratan`: restate the last message in plain English for a non-native reader, point
+  first, qualifiers up front, every fact kept. Origin: #23.
+
 - README: a Codex plugin install honours `policy.allow_implicit_invocation: false`, now
   verified with `codex debug prompt-input` in an isolated `CODEX_HOME`.
 
