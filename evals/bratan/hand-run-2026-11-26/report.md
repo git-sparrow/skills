@@ -13,7 +13,7 @@ block, `<sha>..HEAD`, the `blob/main` limit and the **unverified** caveat; ended
 | Check | Result |
 | --- | --- |
 | Point first | yes |
-| Every fact kept (keys, URL shape, diff range, caveat, multi-source options) | yes |
+| Every fact kept (keys, URL shape, diff range, caveat, multi-source options) | all but one: see the working-terms drift below |
 | Nothing added | yes |
 | Literal words, short active sentences | yes ("standardise" and "string→string" gone) |
 | Qualifiers up front and bold | yes, but over-applied: seven bold words, not only the meaning-changing one |
