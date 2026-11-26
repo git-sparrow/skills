@@ -4,7 +4,8 @@ Personal agent skills for **Claude Code** and **Codex**, from one layout.
 
 ## Skills
 
-Each skill comes from a real incident, and the PR that added it shows the skill at work.
+Each skill names its origin: an incident, or an inspiration and the job it does here. The
+PR that added it shows the skill at work.
 
 | Skill | Why it exists | Evidence |
 | --- | --- | --- |
@@ -12,6 +13,7 @@ Each skill comes from a real incident, and the PR that added it shows the skill 
 | `trim-redundancy` | [git-sparrow/kavtsya#305](https://github.com/git-sparrow/kavtsya/pull/305): a redundant incident recap in the docs | [#4](https://github.com/git-sparrow/skills/pull/4) |
 | `cross-design` | [#12](https://github.com/git-sparrow/skills/issues/12): separate design consultation from repeated code-review repair rounds | [#13](https://github.com/git-sparrow/skills/pull/13): protocol tests, simulation, and a [live native two-model consultation](evals/cross-design/2026-11-16-native/decision.md) |
 | `cross-review` | [#11](https://github.com/git-sparrow/skills/issues/11): replace repeated repair rounds and unreliable reports with bounded evidence-based review | [Design decision](evals/cross-review/design-2026-11-17/decision.md), [live evaluations](evals/cross-review/live-2026-11-17/report.md) |
+| `craft-skill` | This session's brainstorm (inspiration): build new skills from incidents or other authors' skills, with pinned credits an upstream review can diff | PR pending; hand-run eval pending |
 
 Review-only is the default. Optional repair gets focused verification. Cross-review can
 select managed native collaboration or the [Claude Code + Codex CLI runner](skills/cross-review/references/transports.md).
@@ -42,7 +44,9 @@ marketplace source (Claude Code).
 - `.claude-plugin/marketplace.json` and `.claude-plugin/plugin.json`: the single manifest
   pair. Codex reads the same files, so there is no second manifest.
 - `skills/<name>/SKILL.md`: one folder per skill, `name` and `description` in the
-  frontmatter.
+  frontmatter. Skills drawn from other authors credit them in `metadata`; the format is
+  [`skills/craft-skill/references/credits.md`](skills/craft-skill/references/credits.md),
+  the terms are in [`GLOSSARY.md`](GLOSSARY.md).
 - `lib/artifacts.mjs`: shared filesystem/hash primitives for cross-design and cross-review.
   Install the whole plugin; individual skill-directory symlinks into a complete checkout
   work, but copying a skill folder without `lib/` does not.
