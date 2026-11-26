@@ -1,6 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 (2026-11-26)
+
+- README: the Skills table shows each skill's name and how to use it; origins live in each
+  skill's PR and issue.
 
 - Add `craft-skill`: build a skill from an incident or an inspiration, credit each Source
   with flat, commit-pinned metadata, prove it on a hand-run task and deliver it by PR.

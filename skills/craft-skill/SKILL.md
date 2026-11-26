@@ -96,8 +96,8 @@ Show the user each outward text and wait for approval before sending it.
 1. Inspiration Origin: open an issue in the target repo with the Source links, what the
    user liked, the job, and the Difference.
 2. Branch, commit, and follow the target repo's rules. In this repo: add the skill's row
-   to the README's Skills table (Origin under "Why it exists", the PR and eval under
-   "Evidence") and a `CHANGELOG.md` entry under Unreleased.
+   to the README's Skills table (its name and how to use it) and a `CHANGELOG.md` entry
+   under Unreleased.
 3. Open the PR. Its body carries a **Sources** section, one line per Source: what we took,
    what we skipped and why. The later upstream review reads it to judge new upstream work.
 
