@@ -16,16 +16,15 @@ export const CONTRACT = "For finite integer inputs double(n) returns twice n. Th
 const DATE = "2026-11-25T00:00:00Z";
 
 export function makeFixtureRepo(repo, { clean = false } = {}) {
-  // Inherited GIT_* settings (GIT_DEFAULT_HASH, GIT_DIR, ...) would change or misplace
-  // the commits, so none pass through.
+  // Inherited GIT_* settings (GIT_DEFAULT_HASH, GIT_DIR, ...) and global or system config
+  // (i18n.commitEncoding, ...) would change or misplace the commits, so none apply.
   const env = {
     ...Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith("GIT_"))),
+    GIT_CONFIG_GLOBAL: "/dev/null", GIT_CONFIG_NOSYSTEM: "1",
     GIT_AUTHOR_NAME: "Fixture", GIT_AUTHOR_EMAIL: "fixture@example.invalid", GIT_AUTHOR_DATE: DATE,
     GIT_COMMITTER_NAME: "Fixture", GIT_COMMITTER_EMAIL: "fixture@example.invalid", GIT_COMMITTER_DATE: DATE,
   };
-  // -c overrides keep a user's signing or hook config from changing the commits.
-  const git = (...argv) => execFileSync("git",
-    ["-C", repo, "-c", "commit.gpgsign=false", "-c", "core.hooksPath=/dev/null", ...argv],
+  const git = (...argv) => execFileSync("git", ["-C", repo, ...argv],
     { stdio: "pipe", env, encoding: "utf8" }).trim();
   git("init", "-q", "--object-format=sha1");
   git("config", "user.name", "Fixture");

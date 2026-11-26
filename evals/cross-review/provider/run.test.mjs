@@ -28,16 +28,22 @@ test("fixture commits are the same on every machine", (t) => {
     assert.deepEqual({ ...makeFixtureRepo(repo, { clean }), file: undefined },
       { file: undefined, base: PINS.base, head });
   }
-  // Inherited Git settings must not change the commits.
+  // Inherited Git settings and global config must not change the commits.
+  const home = path.join(root, "home");
+  mkdirSync(home);
+  writeFileSync(path.join(home, ".gitconfig"),
+    "[i18n]\n\tcommitEncoding = ISO-8859-1\n[init]\n\tdefaultObjectFormat = sha256\n[commit]\n\tgpgsign = true\n");
   const repo = path.join(root, "env");
   mkdirSync(repo);
-  const saved = process.env.GIT_DEFAULT_HASH;
-  process.env.GIT_DEFAULT_HASH = "sha256";
+  const saved = { GIT_DEFAULT_HASH: process.env.GIT_DEFAULT_HASH, HOME: process.env.HOME };
+  Object.assign(process.env, { GIT_DEFAULT_HASH: "sha256", HOME: home });
   try {
     assert.equal(makeFixtureRepo(repo).head, PINS.head);
   } finally {
-    if (saved === undefined) delete process.env.GIT_DEFAULT_HASH;
-    else process.env.GIT_DEFAULT_HASH = saved;
+    for (const [k, v] of Object.entries(saved)) {
+      if (v === undefined) delete process.env[k];
+      else process.env[k] = v;
+    }
   }
 });
 
