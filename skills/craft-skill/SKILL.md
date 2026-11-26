@@ -56,6 +56,8 @@ available to settle names. Settle every one of these:
 - **Relation** per Source: `adapted` when wording is reused, `inspired-by` for ideas only.
   A Source with license `none` is `inspired-by` only.
 - **Target**: this repo (default), a private skills folder, or a project's own skills.
+  A public target holds nothing personal: the skill speaks of the reader in general terms,
+  and personal facts stay in the user's own instructions.
 - **Invocation**: user-invoked by default; model-invoked only when the Origin shows the
   agent must reach it alone or another skill must call it.
 - **Name**: verb plus object, matching the target's existing names.
@@ -80,7 +82,8 @@ skipped item is absent.
 ## 4. Prove
 
 Run the skill by hand on one realistic task: the incident replayed, or for an
-inspiration, a task from the job the user named. Record the task, what the skill did and
+inspiration, a task from the job the user named. Run it in a fresh subagent that gets only
+the skill and the task, so the session's context cannot fill the gaps. Record the task, what the skill did and
 the verdict in `evals/<name>/hand-run-<YYYY-MM-DD>/report.md`. Fix the draft and rerun
 until the verdict holds.
 
