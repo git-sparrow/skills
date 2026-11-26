@@ -5,6 +5,9 @@
 - `cross-review`: Step 1 requires the snapshot to carry every cited file and affected
   caller, so reviewers can check each obligation without the repository (#29).
 
+- `craft-skill`: the hand run keeps its prompt and full output beside the report, and
+  delivery says when a release is needed to ship the skill (#28).
+
 ## 0.2.0 (2026-11-26)
 
 - README: the Skills table shows each skill's name and how to use it; origins live in each
