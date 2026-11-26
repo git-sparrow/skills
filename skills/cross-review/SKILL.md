@@ -22,6 +22,11 @@ linked issue does not automatically add obligations. Record provenance and the f
 of fetched refs. Capture the repository, base/head selectors and resolved commits, generated
 diff, evidence and prompt identity using [the protocol](references/protocol.md).
 
+Reviewers see only the snapshot. Copy into the source directory, as text at the head pin,
+every file the contract cites and every caller or reader of a changed contract that the
+diff does not show whole. Step 1 is done when a reviewer could check each obligation
+without opening the repository.
+
 Initial reviews require a clean repository and committed pins. The helper generates a
 direct base-to-head diff; resolve a merge base explicitly if that is the intended base.
 Review source at the pins, not mutable working files. Keep run artifacts outside the repo.

@@ -20,7 +20,7 @@ Set `"transport": "claude-codex"` in config. Supply one expert with
 `"provider": "openai", "harness": "codex"`. Give each a concrete model ID
 reachable by its account. Use the caller's selection and preserve the exact binding.
 Select this path only when the caller authorizes both providers to receive the snapshot.
-Add relevant pinned source excerpts to the snapshot when the diff lacks context. The
+The snapshot carries the context Step 1 requires. The
 runner sends both CLIs the saved request and inline snapshot through stdin. Each starts
 in a fresh scratch directory. Follow-up calls include their saved packet and repair overlay.
 
