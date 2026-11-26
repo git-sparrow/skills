@@ -7,6 +7,8 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { setTimeout as delay } from "node:timers/promises";
 import { closeout, init, prepare } from "../../../skills/cross-review/scripts/protocol.mjs";
+import { CONTRACT, STANDARDS, makeFixtureRepo } from "./fixture.mjs";
+import { PINS, qualify } from "./qualify.mjs";
 
 const runner = fileURLToPath(new URL("../../../skills/cross-review/scripts/provider.mjs", import.meta.url));
 const fake = fileURLToPath(new URL("./fake-provider.mjs", import.meta.url));
@@ -15,6 +17,29 @@ const claudeModel = process.env.CROSS_REVIEW_CLAUDE_MODEL;
 const codexModel = process.env.CROSS_REVIEW_CODEX_MODEL;
 const live = Boolean(claudeModel && codexModel);
 const json = (dir, name) => JSON.parse(readFileSync(path.join(dir, name), "utf8"));
+
+// The manual qualification (README.md, qualify.mjs) names these commits.
+test("fixture commits are the same on every machine", (t) => {
+  const root = mkdtempSync(path.join(tmpdir(), "provider-fixture-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  for (const [clean, head] of [[false, PINS.head], [true, "8b13a91b853effc6c304151417ab97abf5bd2f2e"]]) {
+    const repo = path.join(root, String(clean));
+    mkdirSync(repo);
+    assert.deepEqual({ ...makeFixtureRepo(repo, { clean }), file: undefined },
+      { file: undefined, base: PINS.base, head });
+  }
+  // Inherited Git settings must not change the commits.
+  const repo = path.join(root, "env");
+  mkdirSync(repo);
+  const saved = process.env.GIT_DEFAULT_HASH;
+  process.env.GIT_DEFAULT_HASH = "sha256";
+  try {
+    assert.equal(makeFixtureRepo(repo).head, PINS.head);
+  } finally {
+    if (saved === undefined) delete process.env.GIT_DEFAULT_HASH;
+    else process.env.GIT_DEFAULT_HASH = saved;
+  }
+});
 
 function fixture(t, { deadline = 10_000, behavior = "success", clean = false, real = false, mode = "review" } = {}) {
   const root = mkdtempSync(path.join(tmpdir(), "provider-eval-"));
@@ -26,24 +51,12 @@ function fixture(t, { deadline = 10_000, behavior = "success", clean = false, re
   for (const dir of [repo, source, bin]) mkdirSync(dir);
   if (real) t.diagnostic(`Live artifacts: ${root}`);
   else t.after(() => rmSync(root, { recursive: true, force: true }));
-  const git = (...argv) => execFileSync("git", ["-C", repo, ...argv], { stdio: "pipe" });
-  git("init", "-q");
-  git("config", "user.name", "Fixture");
-  git("config", "user.email", "fixture@example.invalid");
-  const file = path.join(repo, "calc.mjs");
-  writeFileSync(file, "export const double = n => n * 2;\n");
-  const standards = "Use named exports for public functions. This is the only coding standard for this fixture.\n";
-  writeFileSync(path.join(repo, "CODING_STANDARDS.md"), standards);
-  git("add", "calc.mjs", "CODING_STANDARDS.md");
-  git("commit", "-qm", "base");
-  writeFileSync(file, clean ? "export const double = n => 2 * n;\n" : "export const double = n => n * 3;\n");
-  git("commit", "-qam", "head");
-  const contract = "For finite integer inputs double(n) returns twice n. The entire implementation appears in the diff.\n";
-  writeFileSync(path.join(source, "contract.md"), contract);
+  const { file } = makeFixtureRepo(repo, { clean });
+  writeFileSync(path.join(source, "contract.md"), CONTRACT);
   const verify = execFileSync(process.execPath, ["--input-type=module", "-e",
     "import { double } from './calc.mjs'; console.log(double(2))"], { cwd: repo, encoding: "utf8" });
   assert.equal(Number(verify), clean ? 4 : 6);
-  writeFileSync(path.join(source, "CODING_STANDARDS.md"), standards);
+  writeFileSync(path.join(source, "CODING_STANDARDS.md"), STANDARDS);
   writeFileSync(path.join(source, "check.md"),
     `Fixture coordinator ran double(2) at the pinned head and observed ${verify.trim()}. ` +
     "The fixture has one implementation file and no downstream callers. The patch is generated from the two commits.\n");
@@ -85,6 +98,16 @@ test("both provider envelopes are accepted and duplicate dispatch is rejected", 
   assert.equal(codex.code, 0, codex.stderr);
   assert.equal(closeout(run).review, "COMPLETE");
   assert.equal(readFileSync(marker, "utf8").trim().split("\n").length, 2);
+});
+
+test("the qualification check passes a complete run and names each gap", { skip: !supported }, async (t) => {
+  const { reserve, run, start } = fixture(t);
+  const attempts = [reserve("a"), reserve("b")];
+  for (const r of await Promise.all(attempts.map((a) => start(a).done))) assert.equal(r.code, 0, r.stderr);
+  assert.deepEqual(qualify(run, "fake-claude", "fake-codex"), []);
+  const errors = qualify(run, "other-claude", "fake-codex", { base: "x", head: "y" }).join("\n");
+  assert.match(errors, /not the fixture pins x\.\.y/);
+  assert.match(errors, /0 accepted discoveries on claude-code other-claude/);
 });
 
 test("a reserved attempt cannot dispatch after its coordinator pauses past expiry", { skip: !supported }, async (t) => {

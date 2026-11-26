@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- `cross-review`: the transport guide explains the two startup failures seen from a
+  sandboxed Codex coordinator and how to launch without loosening reviewer isolation.
+  The provider eval README gives a manual coordinator qualification: a fixture with fixed
+  commits (`fixture.mjs`), one prompt for both hosts, and a closeout check
+  (`qualify.mjs`) (#20).
+
 ## 0.2.1 (2026-11-26)
 
 - CI: `node --test` runs on each pull request: the skill script tests, the cross-review

@@ -32,6 +32,8 @@ selected CLI, and calls the existing protocol's `finish`:
 node <skill>/scripts/provider.mjs <run> <attempt-id>
 ```
 
+If a CLI fails to start, see [When a CLI fails to start](#when-a-cli-fails-to-start).
+
 Use a foreground command or managed process that can keep the supervisor alive. Its
 timer runs independently of conversational polling. At deadline or on SIGINT/SIGTERM,
 it sends TERM to the CLI process group and escalates to KILL. It records whether it
@@ -56,6 +58,30 @@ The repository's provider canary checks for an exposed peer token and a created 
 or hook marker. These observations are specific to the installed CLIs and configuration.
 Codex's read-only sandbox itself does not confine reads to the inline snapshot.
 Store run directories privately and send only material authorized for both providers.
+
+### When a CLI fails to start
+
+A coordinator that runs inside its own sandbox can stop a reviewer CLI before it
+reviews anything. Read the attempt's receipt (`transport.json`: outcome and evidence)
+and its `provider.stderr`, which holds whatever the CLI printed and may be empty. Two
+failures were seen from a Codex coordinator with Claude Code 2.1.332 and codex-cli
+0.172.0 ([qualification](../../../evals/cross-review/provider/qualification.md#skill-driven-coordinator-check)):
+
+- **Claude is not authenticated.** Claude Code could not authenticate from inside
+  the outer sandbox. Run `claude auth status` and `codex login status` through the
+  same host and sandbox that launch the runner; a check from another terminal
+  proves nothing about it.
+- **Codex's app server does not start.** The nested `codex exec` failed to
+  initialize with `Operation not permitted`.
+
+The fix in both cases was the host's approval to run the `provider.mjs` command
+outside the coordinator's sandbox. Change nothing else: the runner sets each
+reviewer's isolation in its own arguments (Claude `--safe-mode --tools ""`; Codex
+`--sandbox read-only --ignore-user-config` with shell and hooks disabled), so they
+still apply outside the outer sandbox. Never add flags that loosen them. A startup
+failure is an access failure, not a transient one, so it does not unlock a retry;
+start a new run once the launch works. These observations cover that one setup;
+other hosts may fail differently.
 
 ## Managed native collaboration
 
