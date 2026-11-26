@@ -6,7 +6,7 @@ Pocock's `wait-what`. Inspiration Origin; target this repo.
 | Step | What happened | Result |
 | --- | --- | --- |
 | 1. Read Sources | Pinned `cursor/plugins@b7b93c3` and `mattpocock/skills@6f7f783`. The nearest-`LICENSE` walk found `pstack/LICENSE` (MIT) where the repo root has none. The search (`gh search code`, `SKILL.md`) surfaced `jackfranklin/dotfiles` `wtf` (MIT), `humanlayer/humanlayer` `asd-ste100` (Apache-2.0, root `LICENSE` + `NOTICE`) and `open-steps` `os-say-simple`; the user took the first two. | pass |
-| 2. Interview | Two `grilling` rounds settled Origin, Difference, take/skip, Relation (all `inspired-by`), target, invocation and name. The user moved the non-native-reader note from the description into the body, and kept personal English-level data out of the public skill, filing a private profile repo for it (sparrow-home#9). | pass, one gap |
+| 2. Interview | Two `grilling` rounds settled Origin, Difference, take/skip, Relation (all `inspired-by`), target, invocation and name. The user moved the non-native-reader note from the description into the body, and kept personal data out of the public skill. | pass, one gap |
 | 3. Draft | `skills/bratan/SKILL.md` with four numbered credit groups and `agents/openai.yaml`. | pass |
 | 4. Prove | A fresh subagent ran `bratan` on a dense message from this session; [report](../../bratan/hand-run-2026-11-26/report.md). | pass |
 | 5. Deliver | Issue #23 opened after the user approved its text; PR follows. | pass |

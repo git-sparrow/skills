@@ -37,7 +37,7 @@ For each link the user gives:
 
 Then search once for related skills (`find-skills` if available; otherwise a web search
 for the job plus `SKILL.md`). Show the user the best two or three with one line each and
-let them pick which join the Sources.
+let them pick which join the Sources. Run the checks above on each one they pick.
 
 Done when every Source has a pinned commit, a license and notes, and the user has ruled
 on the search results.
@@ -55,7 +55,7 @@ available to settle names. Settle every one of these:
 - **Take and skip**: per Source, what we take and what we leave, with the reason.
 - **Relation** per Source: `adapted` when wording is reused, `inspired-by` for ideas only.
   A Source with license `none` is `inspired-by` only.
-- **Target**: this repo (default), a private skills folder, or a project's own skills.
+- **Target**: this repo (default), a private skills repo, or a project repo's own skills.
   A public target holds nothing personal: the skill speaks of the reader in general terms,
   and personal facts stay in the user's own instructions.
 - **Invocation**: user-invoked by default; model-invoked only when the Origin shows the

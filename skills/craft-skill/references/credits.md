@@ -24,10 +24,10 @@ metadata:
 | `credits-N-project` | the project or plugin the Source belongs to |
 | `credits-N-relation` | `adapted` (wording reused) or `inspired-by` (ideas only) |
 | `credits-N-license` | SPDX id of the nearest `LICENSE` above the Source, or `none` |
-| `credits-N-source` | a GitHub `blob/<full-commit-sha>/` URL to the file read |
+| `credits-N-source` | for a file in a repo, a `blob/<full-commit-sha>/` URL to the file read; otherwise the most specific stable URL |
 
-A Source that is not a single file (an agent, a doc, a talk) still gets a group; point
-`source` at the most specific pinned URL there is.
+A Source outside a repo (a talk, a blog post) still gets a group. The upstream review can
+diff only commit-pinned repo URLs; it rereads any other Source in full.
 
 ## Adapted wording
 
