@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- CI: `node --test` runs on each pull request: the skill script tests, the cross-review
+  provider eval with CLI stand-ins, and new repo checks in `scripts/check-skills.test.mjs`
+  for metadata types, credits groups, Claude/Codex invocation parity and README rows (#27).
+
 - `cross-review`: Step 1 requires the snapshot to carry every cited file and affected
   caller, so reviewers can check each obligation without the repository (#29).
 
