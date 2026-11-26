@@ -61,6 +61,30 @@ structured response.
 
 ## Skill-driven coordinator check
 
+Latest run, 2026-11-26, following the README's "Manual coordinator qualification".
+Checkout `04783187bbad5dda162675b47f80a3f90b0cea72` (v0.2.2), a fresh clone; Claude
+Code 2.1.332 and codex-cli 0.172.0; models `claude-opus-5-5` and `gpt-6.2-sol`.
+Fixture pins `bf5fbb6` to `7873087`, one fixture per host.
+
+| Host | `qualify.mjs` | Closeout | Calls | Time | Blocker |
+| --- | --- | --- | --- | --- | --- |
+| Claude Code | `pins, bindings and snapshot: ok` | runtime COMPLETE, review COMPLETE, current | 2 discovery, no retry or challenge | ~36 s | `R1`, `calc.mjs:1` |
+| Codex | `pins, bindings and snapshot: ok` | runtime COMPLETE, review COMPLETE, current | 2 discovery, no retry or challenge | ~58 s | `R1`, `calc.mjs:1` |
+
+- Both coordinators confirmed `R1` by running the pinned implementations with Node
+  v24.22.1: `double(2)` returned 4 at base and 6 at head. Rechecked by hand from
+  `fixture-claude` with `git show <pin>:calc.mjs`.
+- Transport receipts: every attempt `succeeded`. Claude Code reported the resolved
+  model `claude-opus-5-5`; Codex reported none, so `gpt-6.2-sol` is the configured ID.
+- Both fixtures were clean afterwards (`git status --short` empty).
+- The Codex coordinator launched `provider.mjs` with escalated sandbox permissions on
+  its first attempt (its session transcript), so no failed run preceded the accepted
+  one, unlike the first check below.
+- The Codex coordinator narrowed the Claude reviewer's claim "every nonzero integer":
+  both pins overflow to `Infinity` for `Number.MAX_VALUE`. The blocker stands.
+
+## Skill-driven coordinator check, first run (2026-11-25)
+
 Both fresh coordinators followed the skill from PR commit `33d802d` without a
 prepared eval command. They reviewed the same fixture pins, `43effa5` to
 `4a32163`. Each run completed in two discovery calls and confirmed blocker
