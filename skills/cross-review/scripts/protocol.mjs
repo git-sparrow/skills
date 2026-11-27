@@ -72,6 +72,21 @@ export function checkProviderBinding(binding) {
     "Set an explicit provider model ID");
 }
 
+const standards = ["CODING_STANDARDS.md", "CONTRIBUTING.md"]
+  .flatMap((name) => [name, `.github/${name}`, `docs/${name}`]);
+
+// Repo files at head that reviewers need but the source directory lacks: each repo path the
+// contract cites in backticks (a trailing :line is ignored), and each standards file. A
+// source file matches by its relative path or its basename.
+export function missingFromSnapshot(repo, head, contract, sourceFiles) {
+  const tracked = new Set(git(repo, "ls-tree", "-r", "--name-only", head).split("\n").filter(Boolean));
+  const cited = [...contract.matchAll(/`([^`\s]+)`/g)].map((m) => m[1].replace(/:\d+(-\d+)?$/, ""));
+  const present = new Set(sourceFiles.flatMap((f) => [f, path.basename(f)]));
+  const needed = [...cited.filter((f) => tracked.has(f)),
+    ...standards.filter((f) => tracked.has(f))];
+  return [...new Set(needed)].filter((f) => !present.has(f) && !present.has(path.basename(f))).sort();
+}
+
 export function init(run, config, now = Date.now()) {
   const { source, experts, mode = "review", minutes = 30, callMinutes = 10, transport = "native" } = config;
   check(["review", "repair"].includes(mode), "Invalid mode");
@@ -98,9 +113,12 @@ export function init(run, config, now = Date.now()) {
   check(status(repo) === "", "Initial repository must be clean");
   check(nonempty(config.base) && nonempty(config.head), "Missing revision selectors");
   const base = resolve(repo, config.base), head = resolve(repo, config.head);
-  check(nonempty(read(path.join(input, "contract.md"))), "Empty scoped contract");
+  const contract = read(path.join(input, "contract.md"));
+  check(nonempty(contract), "Empty scoped contract");
   const sourceFiles = files(input);
   check(sourceFiles.every((f) => !f.startsWith("_")), "Reserved input name");
+  const missing = missingFromSnapshot(repo, head, contract, sourceFiles);
+  check(missing.length === 0, `Copy into the source directory: ${missing.join(", ")}`);
   mkdirSync(target);
   mkdirSync(path.join(target, "inputs"));
   mkdirSync(path.join(target, "attempts"));

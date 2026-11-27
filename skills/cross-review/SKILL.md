@@ -24,9 +24,10 @@ of fetched refs. Capture the repository, base/head selectors and resolved commit
 diff, evidence and prompt identity using [the protocol](references/protocol.md).
 
 Reviewers see only the snapshot. Copy into the source directory, as text at the head pin,
-every file the contract cites and every caller or reader of a changed contract that the
-diff does not show whole. For a workflow, config or build change, the files it runs or
-loads are readers. Step 1 is done when a reviewer could check each obligation
+every caller or reader of a changed contract that the diff does not show whole. For a
+workflow, config or build change, the files it runs or loads are readers. `init` refuses
+a source directory that lacks a repo file `contract.md` cites in backticks, or a
+standards file the repo has. Step 1 is done when a reviewer could check each obligation
 without opening the repository.
 
 Initial reviews require a clean repository and committed pins. The helper generates a

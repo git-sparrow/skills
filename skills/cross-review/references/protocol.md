@@ -10,7 +10,10 @@ executes and supervises the Claude Code + Codex transport.
 ## Capture
 
 Create a private source directory with nonempty `contract.md` and relevant evidence only.
-Files must be regular files, not symlinks; names beginning `_` are reserved. The contract
+Files must be regular files, not symlinks; names beginning `_` are reserved. `init` fails
+unless every repo path the contract cites in backticks (a trailing `:line` is ignored), and
+every `CODING_STANDARDS.md` or `CONTRIBUTING.md` at the root, `.github/` or `docs/` at head,
+has a source file of the same relative path or basename. The contract
 lists obligations, contextual links and downstream exclusions. Create config JSON outside
 that directory:
 

@@ -5,7 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
-import { init, prepare, preflight, launched, finish, closeout, current } from "./protocol.mjs";
+import { init, missingFromSnapshot, prepare, preflight, launched, finish, closeout, current } from "./protocol.mjs";
 
 const experts = ["a", "b"].map((id) => ({ id, model: `model-${id}`, provider: "test", harness: "fake" }));
 const git = (repo, ...args) => execFileSync("git", ["-C", repo, ...args], { encoding: "utf8" }).trim();
@@ -259,4 +259,27 @@ test("a lost challenge supervisor blocks another phase for that expert", (t) => 
   start(run, "a", "challenge", packet, 4000);
   assert.throws(() => prepare(run, "a", "verification", packet, 5000), /missing terminal evidence/);
   assert.equal(prepare(run, "b", "challenge", packet, 5000).expert, "b");
+});
+
+test("init refuses a snapshot missing a cited repo file or a standards file", (t) => {
+  const { root, repo } = fixture(t);
+  const source = path.join(root, "source2");
+  mkdirSync(source);
+  mkdirSync(path.join(repo, "lib"));
+  put(path.join(repo, "lib", "caller.mjs"), "x\n"); put(path.join(repo, "CONTRIBUTING.md"), "rules\n");
+  git(repo, "add", "."); git(repo, "commit", "-qm", "more"); git(repo, "branch", "-f", "review-head");
+  put(path.join(source, "contract.md"), "Keep `lib/caller.mjs:3` working; `value.txt` changes; `npm test` runs.");
+  const config = { repo, source, base: "base", head: "review-head", experts };
+  assert.throws(() => init(path.join(root, "r1"), config),
+    /Copy into the source directory: CONTRIBUTING\.md, lib\/caller\.mjs, value\.txt/);
+  put(path.join(source, "CONTRIBUTING.md"), "rules\n");
+  mkdirSync(path.join(source, "lib")); put(path.join(source, "lib", "caller.mjs"), "x\n");
+  put(path.join(source, "value.txt"), "new\n");
+  assert.equal(init(path.join(root, "r2"), config).head, git(repo, "rev-parse", "review-head"));
+});
+
+test("missingFromSnapshot matches by basename and ignores paths the repo lacks", (t) => {
+  const { repo } = fixture(t);
+  assert.deepEqual(missingFromSnapshot(repo, "review-head", "`value.txt` and `nope.md`", ["head/value.txt"]), []);
+  assert.deepEqual(missingFromSnapshot(repo, "review-head", "`value.txt`", ["contract.md"]), ["value.txt"]);
 });
