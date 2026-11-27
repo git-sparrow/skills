@@ -1,11 +1,13 @@
 # Changelog
 
-## Unreleased
+## 0.2.3 (2026-11-27)
 
 - `cross-review`: `init` refuses a source directory that lacks a repo file `contract.md`
   cites in backticks, or a `CODING_STANDARDS.md` or `CONTRIBUTING.md` the repo has (#38).
 - Tests check that `CHANGELOG.md` has at most one `## Unreleased` and that its top version
   matches `plugin.json`; `test.yml` notes that its job names are required checks (#38).
+- Provider eval: `qualification.md` records the 2026-11-26 coordinator check, passed on
+  both Claude Code and Codex (#39).
 
 ## 0.2.2 (2026-11-26)
 
