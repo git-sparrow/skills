@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- `cross-review`: `init` refuses a source directory that lacks a repo file `contract.md`
+  cites in backticks, or a `CODING_STANDARDS.md` or `CONTRIBUTING.md` the repo has (#38).
+- Tests check that `CHANGELOG.md` has at most one `## Unreleased` and that its top version
+  matches `plugin.json`; `test.yml` notes that its job names are required checks (#38).
+
 ## 0.2.2 (2026-11-26)
 
 - `cross-review`: Step 1 counts the files a workflow, config or build change runs as

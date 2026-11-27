@@ -16,6 +16,13 @@ test("README has one Skills row per skill, auto exactly when model-invocable", (
   assert.deepEqual(checkReadme(readmeRows(readFileSync(join(root, "README.md"), "utf8")), skills), []);
 });
 
+test("CHANGELOG has at most one Unreleased heading and its top version matches plugin.json", () => {
+  const changelog = readFileSync(join(root, "CHANGELOG.md"), "utf8");
+  const { version } = JSON.parse(readFileSync(join(root, ".claude-plugin", "plugin.json"), "utf8"));
+  assert.ok((changelog.match(/^## Unreleased\b/gm) ?? []).length <= 1, "more than one ## Unreleased");
+  assert.equal(changelog.match(/^## (\d+\.\d+\.\d+)\b/m)?.[1], version);
+});
+
 // The cases below prove each check fires, on inline fixtures.
 
 const sha = "b7b93c36be9bcc36a74db438e0fd385d660bc559";

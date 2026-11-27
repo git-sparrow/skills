@@ -8,6 +8,9 @@ on:
 permissions:
   contents: read
 
+# Branch protection on main requires the checks "node-test (20.11)" and "node-test (24)".
+# Renaming the job or changing the Node versions leaves every PR waiting on checks that never
+# report: update branch protection in the same change.
 jobs:
   node-test:
     runs-on: ubuntu-latest
